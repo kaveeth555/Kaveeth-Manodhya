@@ -8,7 +8,7 @@ import Resume from '../components/Resume';
 export default function Portfolio() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const mousePos = useRef({ x: 0, y: 0 });
 
   const socialLinks = [
     {
@@ -43,12 +43,13 @@ export default function Portfolio() {
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
+      mousePos.current = { x: e.clientX, y: e.clientY };
     };
 
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
+
 
   // Interactive Background Logic
   useEffect(() => {
@@ -65,6 +66,17 @@ export default function Portfolio() {
     const visibilityRadius = 350; // Larger than influence to fade in before moving
     const returnSpeed = 0.02; // Slower for "liquid" feel
 
+    const colors = [
+      '239, 68, 68',   // Red-500
+      '34, 197, 94',   // Green-500
+      '59, 130, 246',  // Blue-500
+      '234, 179, 8',   // Yellow-500
+      '236, 72, 153',  // Pink-500
+      '168, 85, 247',  // Purple-500
+      '6, 182, 212',   // Cyan-500
+      '249, 115, 22',  // Orange-500
+    ];
+
     class Point {
       x: number;
       y: number;
@@ -72,6 +84,7 @@ export default function Portfolio() {
       originY: number;
       vx: number;
       vy: number;
+      color: string;
 
       constructor(x: number, y: number) {
         this.x = x;
@@ -80,6 +93,7 @@ export default function Portfolio() {
         this.originY = y;
         this.vx = 0;
         this.vy = 0;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
       }
 
       update(mouse: { x: number, y: number }) {
@@ -120,13 +134,11 @@ export default function Portfolio() {
         if (dist < visibilityRadius) {
           // Smooth fade out using eased opacity
           const normalizedDist = dist / visibilityRadius;
-          const opacity = Math.max(0, Math.pow(1 - normalizedDist, 2) * 0.6); // Quadratic ease-out, max opacity 0.6
+          const opacity = Math.max(0, Math.pow(1 - normalizedDist, 2) * 0.85); // Increased max opacity
 
           if (opacity > 0.01) {
-            ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.fillStyle = `rgba(${this.color}, ${opacity})`;
+            ctx.fillRect(this.x - 1, this.y - 3, 2, 6); // Slightly larger lines
           }
         }
       }
@@ -148,8 +160,8 @@ export default function Portfolio() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       points.forEach(point => {
-        point.update(mousePos);
-        point.draw(mousePos);
+        point.update(mousePos.current);
+        point.draw(mousePos.current);
       });
 
       animationFrameId = requestAnimationFrame(animate);
@@ -168,7 +180,7 @@ export default function Portfolio() {
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [mousePos]);
+  }, []);
 
 
   // Background decorative code snippets
@@ -328,7 +340,7 @@ export default function Portfolio() {
             <div className="relative">
               <h1 className="text-5xl md:text-7xl font-bold mb-4 tracking-tighter flex items-center justify-center md:justify-start gap-2">
                 <span className="font-mono text-4xl text-blue-700">&lt;</span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-cyan-700">coder</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-cyan-700">/coder</span>
                 <span className="font-mono text-4xl text-blue-700">&gt;</span>
               </h1>
               <p className="text-gray-900 font-medium text-sm md:text-base leading-relaxed">
@@ -355,7 +367,7 @@ export default function Portfolio() {
       </main>
 
       {/* About Me Section */}
-      <section id="about" className="py-20 bg-white relative z-30 font-sans">
+      <section id="about" className="py-20 relative z-30 font-sans bg-white/30 backdrop-blur-sm">
         <div className="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
           {/* Text Content */}
           <div className="flex-1 space-y-6">
