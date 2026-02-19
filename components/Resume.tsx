@@ -65,12 +65,12 @@ export default function Resume() {
     <div className="w-full max-w-4xl mx-auto p-4 md:p-8 space-y-12">
 
       {/* Experience Section */}
-      <section className="space-y-6">
+      <section id="experience" className="space-y-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-3 rounded-full bg-blue-500/10 text-blue-400">
+          <div className="p-3 rounded-full bg-blue-100 text-blue-600">
             <Briefcase className="w-6 h-6" />
           </div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold text-gray-900">
             Experience
           </h2>
         </div>
@@ -79,20 +79,15 @@ export default function Resume() {
           {experiences.map((exp, index) => (
             <div
               key={index}
-              className="group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:scale-[1.01]"
-              style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
-                border: '1px solid rgba(255, 255, 255, 0.05)',
-                backdropFilter: 'blur(20px)'
-              }}
+              className="group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:scale-[1.01] bg-white border border-gray-100 shadow-md hover:shadow-xl"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-50/50 via-purple-50/50 to-blue-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
               <div className="relative z-10 space-y-4">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                   <div className="flex gap-4">
                     {exp.logo && (
-                      <div className="relative w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden bg-white/10 p-1">
+                      <div className="relative w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden bg-gray-50 p-1 border border-gray-100">
                         <Image
                           src={exp.logo}
                           alt={exp.company}
@@ -103,11 +98,11 @@ export default function Resume() {
                       </div>
                     )}
                     <div>
-                      <h3 className="text-xl font-bold text-slate-100">{exp.role}</h3>
-                      <p className="text-blue-400 font-medium">{exp.company}</p>
+                      <h3 className="text-xl font-bold text-gray-900">{exp.role}</h3>
+                      <p className="text-blue-600 font-medium">{exp.company}</p>
                     </div>
                   </div>
-                  <div className="flex flex-col md:items-end text-sm text-slate-400 space-y-1">
+                  <div className="flex flex-col md:items-end text-sm text-gray-500 space-y-1">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
                       <span>{exp.period}</span>
@@ -119,10 +114,10 @@ export default function Resume() {
                   </div>
                 </div>
 
-                <ul className="space-y-2 text-slate-300">
+                <ul className="space-y-2 text-gray-600">
                   {exp.description.map((item, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-blue-400 flex-shrink-0" />
+                      <span className="mt-2 h-1.5 w-1.5 rounded-full bg-blue-500 flex-shrink-0" />
                       <span className="leading-relaxed">{item}</span>
                     </li>
                   ))}
@@ -134,7 +129,7 @@ export default function Resume() {
                       href={exp.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/20 transition-all duration-300 hover:scale-105 hover:shadow-blue-500/40 hover:-translate-y-0.5 border border-blue-400/20 group/btn"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gray-900 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 hover:bg-black group/btn"
                     >
                       <span className="font-medium">Visit Website</span>
                       <ExternalLink className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
@@ -148,12 +143,12 @@ export default function Resume() {
       </section>
 
       {/* Education Section */}
-      <section className="space-y-6">
+      <section id="education" className="space-y-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-3 rounded-full bg-purple-500/10 text-purple-400">
+          <div className="p-3 rounded-full bg-purple-100 text-purple-600">
             <GraduationCap className="w-6 h-6" />
           </div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold text-gray-900">
             Education
           </h2>
         </div>
@@ -162,19 +157,14 @@ export default function Resume() {
           {education.map((edu, index) => (
             <div
               key={index}
-              className="group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02]"
-              style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
-                border: '1px solid rgba(255, 255, 255, 0.05)',
-                backdropFilter: 'blur(10px)'
-              }}
+              className="group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] bg-white border border-gray-100 shadow-md hover:shadow-xl"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-50/50 to-pink-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
               <div className="relative z-10 space-y-2">
                 <div className="flex items-start gap-4 h-full">
                   {edu.logo && (
-                    <div className="relative w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden bg-white/10 p-1">
+                    <div className="relative w-12 h-12 flex-shrink-0 rounded-lg overflow-hidden bg-gray-50 p-1 border border-gray-100">
                       <Image
                         src={edu.logo}
                         alt={edu.institution}
@@ -185,11 +175,11 @@ export default function Resume() {
                     </div>
                   )}
                   <div className="flex flex-col justify-center min-h-[4rem]">
-                    <h3 className="text-lg font-bold text-slate-100 leading-tight mb-1">{edu.institution}</h3>
-                    <p className="text-purple-400 font-medium text-sm">{edu.degree}</p>
+                    <h3 className="text-lg font-bold text-gray-900 leading-tight mb-1">{edu.institution}</h3>
+                    <p className="text-purple-600 font-medium text-sm">{edu.degree}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-slate-400 pt-2">
+                <div className="flex items-center gap-2 text-sm text-gray-500 pt-2">
                   <Calendar className="w-4 h-4" />
                   <span>{edu.period}</span>
                 </div>
@@ -202,10 +192,10 @@ export default function Resume() {
       {/* Skills Section */}
       <section className="space-y-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-3 rounded-full bg-cyan-500/10 text-cyan-400">
+          <div className="p-3 rounded-full bg-cyan-100 text-cyan-600">
             <Briefcase className="w-6 h-6" />
           </div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold text-gray-900">
             Top Skills
           </h2>
         </div>
@@ -214,12 +204,7 @@ export default function Resume() {
           {skills.map((skill, index) => (
             <div
               key={index}
-              className="px-4 py-2 rounded-full text-slate-300 font-medium transition-all duration-300 hover:text-white"
-              style={{
-                background: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                boxShadow: '0 0 0 1px rgba(0,0,0,0.1)'
-              }}
+              className="px-4 py-2 rounded-full text-gray-700 font-medium transition-all duration-300 hover:text-white bg-gray-100 hover:bg-gray-900 border border-gray-200"
             >
               {skill}
             </div>

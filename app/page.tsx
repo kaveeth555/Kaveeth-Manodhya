@@ -1,172 +1,14 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { Github, Youtube, Facebook, Linkedin } from 'lucide-react';
+import { Github, Youtube, Facebook, Linkedin, Mail, Twitter, Globe, Menu, X } from 'lucide-react';
 import Resume from '../components/Resume';
 
 export default function Portfolio() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const particles: Particle[] = [];
-    const particleCount = 80;
-    const connectionDistance = 150;
-
-    class Particle {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      radius: number;
-
-      constructor() {
-        this.x = Math.random() * canvas!.width;
-        this.y = Math.random() * canvas!.height;
-        this.vx = (Math.random() - 0.5) * 0.5;
-        this.vy = (Math.random() - 0.5) * 0.5;
-        this.radius = Math.random() * 2 + 1;
-      }
-
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-
-        if (this.x < 0 || this.x > canvas!.width) this.vx *= -1;
-        if (this.y < 0 || this.y > canvas!.height) this.vy *= -1;
-      }
-
-      draw() {
-        if (!ctx) return;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(100, 200, 255, 0.6)';
-        ctx.fill();
-      }
-    }
-
-    for (let i = 0; i < particleCount; i++) {
-      particles.push(new Particle());
-    }
-
-    function drawConnections() {
-      if (!ctx) return;
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < connectionDistance) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(100, 200, 255, ${1 - distance / connectionDistance})`;
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.stroke();
-          }
-        }
-      }
-    }
-
-    let floatingNodes: FloatingNode[] = [];
-    const nodeCount = 12;
-
-    class FloatingNode {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      radius: number;
-      hue: number;
-
-      constructor() {
-        this.x = Math.random() * canvas!.width;
-        this.y = Math.random() * canvas!.height;
-        this.vx = (Math.random() - 0.5) * 0.3;
-        this.vy = (Math.random() - 0.5) * 0.3;
-        this.radius = Math.random() * 60 + 40;
-        this.hue = Math.random() * 60 + 180;
-      }
-
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-
-        if (this.x < -this.radius || this.x > canvas!.width + this.radius) this.vx *= -1;
-        if (this.y < -this.radius || this.y > canvas!.height + this.radius) this.vy *= -1;
-      }
-
-      draw() {
-        if (!ctx) return;
-        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
-        gradient.addColorStop(0, `hsla(${this.hue}, 80%, 60%, 0.15)`);
-        gradient.addColorStop(1, `hsla(${this.hue}, 80%, 60%, 0)`);
-
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = gradient;
-        ctx.fill();
-      }
-    }
-
-    for (let i = 0; i < nodeCount; i++) {
-      floatingNodes.push(new FloatingNode());
-    }
-
-    function animate() {
-      if (!ctx || !canvas) return;
-      ctx.fillStyle = 'rgba(10, 15, 35, 0.1)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      floatingNodes.forEach(node => {
-        node.update();
-        node.draw();
-      });
-
-      particles.forEach(particle => {
-        particle.update();
-        particle.draw();
-      });
-
-      drawConnections();
-
-      requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
 
   const socialLinks = [
     {
@@ -199,243 +41,357 @@ export default function Portfolio() {
     }
   ];
 
-  return (
-    <div className="relative min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900">
-      {/* Custom Cursor */}
-      <div
-        className="pointer-events-none fixed z-50 mix-blend-difference transition-transform duration-150 ease-out"
-        style={{
-          left: `${mousePos.x}px`,
-          top: `${mousePos.y}px`,
-          transform: `translate(-50%, -50%) scale(${isHovering ? 1.5 : 1})`
-        }}
-      >
-        <div className="h-6 w-6 rounded-full border-2 border-cyan-400 bg-cyan-400/20 backdrop-blur-sm" />
-      </div>
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
 
-      {/* Animated Background Canvas */}
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  // Interactive Background Logic
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let points: Point[] = [];
+    const spacing = 40;
+    const influenceRadius = 250; // Increased for smoother gradient
+    const visibilityRadius = 350; // Larger than influence to fade in before moving
+    const returnSpeed = 0.02; // Slower for "liquid" feel
+
+    class Point {
+      x: number;
+      y: number;
+      originX: number;
+      originY: number;
+      vx: number;
+      vy: number;
+
+      constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+        this.originX = x;
+        this.originY = y;
+        this.vx = 0;
+        this.vy = 0;
+      }
+
+      update(mouse: { x: number, y: number }) {
+        const dx = mouse.x - this.x;
+        const dy = mouse.y - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // Repel mouse (Resistance)
+        if (dist < influenceRadius) {
+          const force = (influenceRadius - dist) / influenceRadius;
+          const angle = Math.atan2(dy, dx);
+          // Move away from mouse with eased force
+          const easeForce = force * force;
+          this.vx -= Math.cos(angle) * easeForce * 2.5;
+          this.vy -= Math.sin(angle) * easeForce * 2.5;
+        }
+
+        // Return to origin
+        this.vx += (this.originX - this.x) * returnSpeed;
+        this.vy += (this.originY - this.y) * returnSpeed;
+
+        // Damping
+        this.vx *= 0.92;
+        this.vy *= 0.92;
+
+        this.x += this.vx;
+        this.y += this.vy;
+      }
+
+      draw(mouse: { x: number, y: number }) {
+        if (!ctx) return;
+
+        const dx = mouse.x - this.x;
+        const dy = mouse.y - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // Only draw if within visibility radius
+        if (dist < visibilityRadius) {
+          // Smooth fade out using eased opacity
+          const normalizedDist = dist / visibilityRadius;
+          const opacity = Math.max(0, Math.pow(1 - normalizedDist, 2) * 0.6); // Quadratic ease-out, max opacity 0.6
+
+          if (opacity > 0.01) {
+            ctx.fillStyle = `rgba(0, 0, 0, ${opacity})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+    }
+
+    const init = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      points = [];
+      for (let x = 0; x < canvas.width; x += spacing) {
+        for (let y = 0; y < canvas.height; y += spacing) {
+          points.push(new Point(x, y));
+        }
+      }
+    };
+
+    const animate = () => {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      points.forEach(point => {
+        point.update(mousePos);
+        point.draw(mousePos);
+      });
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    init();
+    animate();
+
+    const handleResize = () => {
+      init();
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [mousePos]);
+
+
+  // Background decorative code snippets
+  const codeSnippets = [
+    { text: '<Developer />', top: '10%', left: '5%', rotate: '-12deg' },
+    { text: 'const creative = true;', top: '25%', right: '10%', rotate: '5deg' },
+    { text: 'npm run start', bottom: '15%', left: '8%', rotate: '15deg' },
+    { text: 'while(alive) { code(); }', bottom: '30%', right: '5%', rotate: '-5deg' },
+    { text: 'git push origin master', top: '15%', right: '25%', rotate: '8deg' },
+    { text: 'import { Future } from "react";', top: '40%', left: '15%', rotate: '-3deg' },
+    { text: 'console.log("Hello World");', bottom: '40%', right: '20%', rotate: '10deg' },
+    { text: 'div { display: flex; }', top: '60%', right: '40%', rotate: '-8deg' },
+    { text: 'return <Success />;', bottom: '10%', left: '30%', rotate: '3deg' },
+  ];
+
+  return (
+    <div className="min-h-screen bg-white text-gray-900 font-sans relative overflow-x-hidden">
+
+      {/* Background Canvas */}
       <canvas
         ref={canvasRef}
-        className="fixed inset-0 z-0 blur-sm"
-        style={{ background: 'linear-gradient(135deg, #0a0f23 0%, #1a1f3a 100%)' }}
+        className="fixed inset-0 z-0 pointer-events-none"
       />
 
-      {/* Gradient Overlay */}
-      <div className="fixed inset-0 z-0 bg-gradient-to-t from-transparent via-blue-500/5 to-transparent" />
-
-      {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center gap-16 py-12 md:py-20 px-4">
-        <div className="w-full max-w-2xl">
-          {/* Glass Card */}
+      {/* Decorative Blurred Code Background */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none">
+        {codeSnippets.map((item, index) => (
           <div
-            className="group relative overflow-hidden rounded-3xl p-1 transition-all duration-500 hover:scale-[1.02]"
+            key={index}
+            className="absolute font-mono text-gray-400 text-lg md:text-2xl font-bold opacity-40 blur-[1px] whitespace-nowrap"
             style={{
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+              top: item.top,
+              left: item.left,
+              right: item.right,
+              bottom: item.bottom,
+              transform: `rotate(${item.rotate})`,
             }}
           >
-            {/* Animated Border Gradient */}
-            <div className="absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-              style={{
-                background: 'linear-gradient(135deg, rgba(100,200,255,0.3), rgba(200,100,255,0.3))',
-                filter: 'blur(20px)',
-              }}
-            />
+            {item.text}
+          </div>
+        ))}
+      </div>
 
-            <div
-              className="relative overflow-hidden rounded-3xl backdrop-blur-xl"
-              style={{
-                background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.4) 100%)',
-                boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 0 0 rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-              }}
-            >
-              {/* Liquid Blob Animation */}
-              <div className="absolute -right-20 -top-20 h-64 w-64 animate-blob rounded-full bg-cyan-400/10 mix-blend-overlay blur-3xl filter" />
-              <div className="animation-delay-2000 absolute -bottom-20 -left-20 h-64 w-64 animate-blob rounded-full bg-blue-400/10 mix-blend-overlay blur-3xl filter" />
-              <div className="animation-delay-4000 absolute left-1/2 top-1/2 h-64 w-64 animate-blob rounded-full bg-purple-400/10 mix-blend-overlay blur-3xl filter" />
-
-              <div className="relative z-10 space-y-8 p-12">
-                {/* Header */}
-                <div className="space-y-4 text-center">
-                  <div className="relative w-32 h-32 mx-auto mb-6">
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 blur-lg opacity-50 animate-pulse" />
-                    <Image
-                      src="/profile.png?v=2"
-                      alt="Kaveeth Manodhya"
-                      fill
-                      className="rounded-full object-cover border-2 border-white/20 relative z-10"
-                      priority
-                      unoptimized
-                    />
-                  </div>
-                  <h1
-                    className="animate-fade-in-up text-5xl font-bold tracking-tight sm:text-6xl"
-                    style={{
-                      background: 'linear-gradient(135deg, #60a5fa 0%, #c084fc 50%, #60a5fa 100%)',
-                      backgroundSize: '200% auto',
-                      backgroundClip: 'text',
-                      WebkitBackgroundClip: 'text',
-                      color: 'transparent',
-                      WebkitTextFillColor: 'transparent',
-                      animation: 'fade-in-up 0.8s ease-out forwards, gradient-shift 3s ease infinite',
-                      fontFamily: '"Space Grotesk", "Inter", system-ui, sans-serif',
-                      filter: 'drop-shadow(0 0 80px rgba(96, 165, 250, 0.3))',
-                    }}
-                  >
-                    Welcome
-                  </h1>
-                  <h2
-                    className="animate-fade-in-up animation-delay-200 text-4xl font-bold tracking-wide sm:text-5xl"
-                    style={{
-                      background: 'linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                      fontFamily: '"Outfit", system-ui, sans-serif',
-                      animationDelay: '0.2s',
-                      letterSpacing: '0.02em',
-                      textShadow: '0 0 40px rgba(255, 255, 255, 0.2)',
-                    }}
-                  >
-                    It's Kaveeth Manodhya
-                  </h2>
-                  <p className="animate-fade-in-up animation-delay-800 text-lg text-slate-300 sm:text-xl max-w-lg mx-auto leading-relaxed"
-                    style={{
-                      fontFamily: '"DM Sans", system-ui, sans-serif',
-                      animationDelay: '0.4s',
-                    }}
-                  >
-                    Undergraduate | Photographer | YouTuber
-                    <br />
-                    <span className="text-sm text-slate-400 mt-2 block">
-
-                    </span>
-                  </p>
-                </div>
-
-                {/* Social Links */}
-                <div className="space-y-4">
-                  {socialLinks.map((link, index) => {
-                    const Icon = link.icon;
-                    return (
-                      <a
-                        key={link.name}
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onMouseEnter={() => setIsHovering(true)}
-                        onMouseLeave={() => setIsHovering(false)}
-                        className={`animate-fade-in-up group/btn relative flex items-center justify-center gap-4 overflow-hidden rounded-2xl bg-gradient-to-r ${link.color} p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 ${link.hoverColor} hover:shadow-2xl`}
-                        style={{
-                          animationDelay: `${0.4 + index * 0.1}s`,
-                          border: '1px solid rgba(255, 255, 255, 0.1)',
-                        }}
-                      >
-                        {/* Shine Effect */}
-                        <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-500 group-hover/btn:translate-x-[100%]" />
-
-                        <Icon className="h-7 w-7 transition-transform duration-300 group-hover/btn:rotate-12 group-hover/btn:scale-110" />
-                        <span className="text-xl font-semibold tracking-wide" style={{ fontFamily: '"Outfit", system-ui, sans-serif' }}>
-                          {link.name}
-                        </span>
-
-                        {/* Arrow Icon */}
-                        <svg
-                          className="absolute right-5 h-5 w-5 opacity-0 transition-all duration-300 group-hover/btn:translate-x-1 group-hover/btn:opacity-100"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                      </a>
-                    );
-                  })}
-                </div>
-
-
-              </div>
-            </div>
+      {/* Navigation */}
+      <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md text-gray-900 py-4 px-6 flex justify-between items-center border-b border-gray-200">
+        <div className="text-2xl font-bold tracking-tight">
+          <div className="border-2 border-black rounded-full p-1 w-10 h-10 flex items-center justify-center">
+            <span>K</span>
           </div>
         </div>
 
-        {/* Resume Section */}
-        <div className="w-full animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
+        {/* Desktop Menu */}
+        <div className="hidden md:flex gap-8 text-sm uppercase tracking-wider font-medium text-gray-600">
+          <a href="#about" className="hover:text-black transition-colors">About</a>
+          <a href="#experience" className="hover:text-black transition-colors">Experience</a>
+          <a href="#education" className="hover:text-black transition-colors">Education</a>
+        </div>
+
+        {/* Social Icons Desktop */}
+        <div className="hidden md:flex gap-4">
+          {socialLinks.map((link) => (
+            <a key={link.name} href={link.url} className="text-gray-600 hover:text-black transition-colors">
+              <link.icon size={18} />
+            </a>
+          ))}
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button className="md:hidden text-black" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          {mobileMenuOpen ? <X /> : <Menu />}
+        </button>
+      </nav>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-40 bg-white pt-20 px-6 md:hidden">
+          <div className="flex flex-col gap-6 text-xl text-gray-800 uppercase tracking-wider font-medium">
+            <a href="#about" className="hover:text-black" onClick={() => setMobileMenuOpen(false)}>About</a>
+            <a href="#experience" className="hover:text-black" onClick={() => setMobileMenuOpen(false)}>Experience</a>
+            <a href="#education" className="hover:text-black" onClick={() => setMobileMenuOpen(false)}>Education</a>
+          </div>
+        </div>
+      )}
+
+      {/* Hero Section */}
+      <main className="relative flex flex-col md:flex-row min-h-screen pt-20 overflow-hidden">
+
+        {/* Left Side - Designer */}
+        <div className="flex-1 relative flex items-center justify-center md:justify-end md:pr-[25vw] p-8 z-10">
+          <div className="text-center md:text-right max-w-sm relative group">
+
+            <div className="relative">
+              <h1 className="text-5xl md:text-7xl font-bold mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-purple-600 drop-shadow-sm">
+                designer
+              </h1>
+              <p className="text-gray-900 font-medium text-sm md:text-base leading-relaxed">
+                UI/UX Designer with a passion for designing beautiful and functional user experiences
+              </p>
+            </div>
+            {/* Artistic Paint Splash Decoration */}
+            <div className="absolute top-1/2 left-10 w-32 h-32 bg-purple-200 blur-2xl rounded-full -z-10 mix-blend-multiply opacity-70"></div>
+          </div>
+        </div>
+
+        {/* Center Image & Vlogger */}
+        <div className="md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-20 w-full md:w-auto flex flex-col items-center justify-center py-8 md:py-0 gap-6">
+
+
+
+
+          <div className="relative w-[350px] h-[350px] md:w-[650px] md:h-[650px]">
+            {/* Split Blur Effect */}
+            <div className="absolute inset-0 z-0 flex items-center justify-center scale-110 opacity-60">
+              <div className="w-full h-full bg-gradient-to-r from-pink-500 via-purple-500 to-transparent blur-[80px] -translate-x-10 rounded-full mix-blend-multiply"></div>
+              <div className="w-full h-full bg-gradient-to-l from-cyan-400 via-blue-500 to-transparent blur-[80px] translate-x-10 rounded-full mix-blend-multiply"></div>
+            </div>
+
+            {/* Vlogger Title - Overlapping Hair */}
+            <div className="absolute top-24 left-1/2 -translate-x-1/2 z-20 text-center w-full">
+              <h2 className="relative text-4xl md:text-5xl font-bold tracking-widest uppercase text-white drop-shadow-lg opacity-90">
+                Vlogger
+              </h2>
+            </div>
+
+            <Image
+              src="/profile-v2.png"
+              alt="Profile"
+              fill
+              className="relative z-10 object-contain [mask-image:linear-gradient(to_bottom,black_50%,transparent_100%)] select-none pointer-events-none transform-gpu will-change-transform"
+              priority
+            />
+          </div>
+
+          {/* Social Buttons - Original Style */}
+          <div className="flex gap-4 mt-4">
+            {socialLinks.map((link, index) => {
+              const Icon = link.icon;
+              return (
+                <a
+                  key={link.name}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`group relative flex items-center justify-center p-3 rounded-full bg-gradient-to-br ${link.color} shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:scale-110 border border-white transform-gpu will-change-transform`}
+                >
+                  <Icon className="h-6 w-6 text-white" />
+                </a>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Right Side - Coder */}
+        <div className="flex-1 relative flex items-center justify-center md:justify-start md:pl-[25vw] p-8 z-10">
+          <div className="text-center md:text-left max-w-sm relative group">
+
+            <div className="relative">
+              <h1 className="text-5xl md:text-7xl font-bold mb-4 tracking-tighter flex items-center justify-center md:justify-start gap-2">
+                <span className="font-mono text-4xl text-blue-700">&lt;</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-cyan-700">coder</span>
+                <span className="font-mono text-4xl text-blue-700">&gt;</span>
+              </h1>
+              <p className="text-gray-900 font-medium text-sm md:text-base leading-relaxed">
+                Front End Developer who focuses on writing clean, elegant and efficient code
+              </p>
+            </div>
+
+            {/* Code Snippet Decoration */}
+            <div className="absolute bottom-20 right-10 -z-10 opacity-10 font-mono text-xs hidden md:block text-blue-900">
+              <pre>{`
+                class Developer {
+                  constructor() {
+                    this.passion = "code";
+                    this.coffee = true;
+                  }
+                }
+              `}</pre>
+            </div>
+
+            <div className="absolute top-1/4 left-10 w-40 h-40 bg-blue-100 blur-3xl rounded-full -z-10 opacity-70"></div>
+          </div>
+        </div>
+
+      </main>
+
+      {/* About Me Section */}
+      <section id="about" className="py-20 bg-white relative z-30 font-sans">
+        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
+          {/* Text Content */}
+          <div className="flex-1 space-y-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">
+              About Me <span className="text-blue-600">.</span>
+            </h2>
+            <p className="text-lg text-gray-600 leading-relaxed">
+              I am an undergraduate at Wayamba University of Sri Lanka, a programmer, and a photographer working at the intersection of technology and digital media. By combining a strong technical background with a passion for cinematic storytelling, I build digital solutions and content designed to be experienced rather than just consumed. Whether I am developing software or producing high-quality tech reviews and travel vlogs for YouTube.
+            </p>
+            <p className="text-lg text-gray-600 leading-relaxed">
+              My goal is to merge strategic thinking with creative vision to build truly immersive digital experiences.
+            </p>
+          </div>
+
+          {/* Second Profile Image */}
+          <div className="flex-1 relative w-full aspect-square max-w-[350px]">
+            <div className="absolute inset-0 bg-gradient-to-tr from-blue-100 to-purple-100 rounded-3xl -rotate-6 transform"></div>
+            <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl">
+              <Image
+                src="/split_face_v2.png"
+                alt="Kaveeth Manodhya - About Me"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Resume Section - Kept existing component */}
+      <section className="py-20 relative z-30">
+        <div className="container mx-auto px-6">
           <Resume />
         </div>
-      </div>
+      </section>
 
-      {/* Global Styles */}
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=DM+Sans:wght@400;500&family=Outfit:wght@600&family=Inter:wght@400&family=Playfair+Display:wght@700&display=swap');
-
-        * {
-          cursor: none !important;
-        }
-
-        @keyframes gradient-shift {
-          0%, 100% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-        }
-
-        @keyframes fade-in-up {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes blob {
-          0%, 100% {
-            transform: translate(0, 0) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-        }
-
-        .animate-fade-in-up {
-          animation: fade-in-up 0.8s ease-out forwards;
-          opacity: 0;
-        }
-
-        .animation-delay-200 {
-          animation-delay: 0.2s;
-        }
-
-        .animation-delay-800 {
-          animation-delay: 0.8s;
-        }
-
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-
-        body {
-          margin: 0;
-          padding: 0;
-          overflow-x: hidden;
-        }
-      `}</style>
     </div>
   );
 }
