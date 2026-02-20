@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { Github, Youtube, Facebook, Linkedin, Mail, Twitter, Globe, Menu, X } from 'lucide-react';
+import { Github, Youtube, Facebook, Linkedin, Mail, Twitter, Globe } from 'lucide-react';
 import Resume from '../components/Resume';
 
 export default function Portfolio() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mousePos = useRef({ x: 0, y: 0 });
 
@@ -46,8 +46,24 @@ export default function Portfolio() {
       mousePos.current = { x: e.clientX, y: e.clientY };
     };
 
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll);
+
+    // Check initial scroll position
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
 
@@ -199,10 +215,10 @@ export default function Portfolio() {
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans relative overflow-x-hidden">
 
-      {/* Background Canvas */}
+      {/* Background Canvas (Desktop Only) */}
       <canvas
         ref={canvasRef}
-        className="fixed inset-0 z-0 pointer-events-none"
+        className="fixed inset-0 z-0 pointer-events-none hidden md:block"
       />
 
       {/* Decorative Blurred Code Background */}
@@ -225,7 +241,10 @@ export default function Portfolio() {
       </div>
 
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md text-gray-900 py-4 px-6 flex justify-between items-center border-b border-gray-200">
+      <nav
+        className={`fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md text-gray-900 px-6 flex justify-between items-center border-b border-gray-200 transition-all duration-300 ${isScrolled ? 'py-2' : 'py-5'
+          }`}
+      >
         <div className="text-2xl font-bold tracking-tight">
           <div className="border-2 border-black rounded-full p-1 w-10 h-10 flex items-center justify-center">
             <span>K</span>
@@ -248,38 +267,26 @@ export default function Portfolio() {
           ))}
         </div>
 
-        {/* Mobile Menu Button */}
-        <button className="md:hidden text-black" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-          {mobileMenuOpen ? <X /> : <Menu />}
-        </button>
       </nav>
 
-      {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-white pt-20 px-6 md:hidden flex flex-col">
-          <div className="flex flex-col gap-6 text-xl text-gray-800 uppercase tracking-wider font-medium flex-1">
-            <a href="#about" className="hover:text-black" onClick={() => setMobileMenuOpen(false)}>About</a>
-            <a href="#experience" className="hover:text-black" onClick={() => setMobileMenuOpen(false)}>Experience</a>
-            <a href="#education" className="hover:text-black" onClick={() => setMobileMenuOpen(false)}>Education</a>
-          </div>
-          <div className="flex gap-6 pb-20 justify-center">
-            {socialLinks.map((link) => {
-              const Icon = link.icon;
-              return (
-                <a key={link.name} href={link.url} className="text-gray-600 hover:text-black transition-colors" target="_blank" rel="noopener noreferrer">
-                  <Icon size={28} />
-                </a>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      {/* Mobile Bottom Navigation (Footer) */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 z-50 py-4 px-6 flex justify-center gap-8 items-center text-sm uppercase tracking-wider font-semibold text-gray-500 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <a href="#about" className="hover:text-black transition-colors">
+          About
+        </a>
+        <a href="#experience" className="hover:text-black transition-colors">
+          Experience
+        </a>
+        <a href="#education" className="hover:text-black transition-colors">
+          Education
+        </a>
+      </div>
 
       {/* Hero Section */}
       <main className="relative flex flex-col md:flex-row min-h-screen pt-20">
 
         {/* Left Side - Designer */}
-        <div className="flex-1 relative flex items-center justify-center md:justify-end md:pr-[25vw] p-8 z-10">
+        <div className="md:flex-1 relative flex items-center justify-center md:justify-end md:pr-[25vw] pt-4 pb-0 px-8 md:p-8 z-10">
           <div className="text-center md:text-right max-w-sm relative group">
 
             <div className="relative">
@@ -296,7 +303,7 @@ export default function Portfolio() {
         </div>
 
         {/* Center Image & Vlogger */}
-        <div className="md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-20 w-full md:w-auto flex flex-col items-center justify-center py-8 md:py-0 gap-6">
+        <div className="md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-20 w-full md:w-auto flex flex-col items-center justify-center pt-2 pb-8 md:py-0 gap-6">
 
 
 
@@ -310,7 +317,7 @@ export default function Portfolio() {
 
             {/* LAYER 1: Shadow for Base text (behind image) */}
             <div className="absolute top-20 md:top-28 left-1/2 -translate-x-1/2 z-[4] text-center w-full pointer-events-none">
-              <h2 className="relative text-3xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-transparent drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] whitespace-nowrap" style={{ WebkitTextStroke: '2px rgba(255, 255, 255, 0.2)' }}>
+              <h2 className="relative text-3xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-transparent drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] whitespace-nowrap outline-text-mobile md:outline-text-desktop">
                 Content Creator
               </h2>
             </div>
@@ -340,14 +347,14 @@ export default function Portfolio() {
 
             {/* LAYER 5: Stroke Outline (in front of image) */}
             <div className="absolute top-20 md:top-28 left-1/2 -translate-x-1/2 z-30 text-center w-full pointer-events-none">
-              <h2 className="relative text-3xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-transparent whitespace-nowrap" style={{ WebkitTextStroke: '2px rgba(255, 255, 255, 0.8)' }}>
+              <h2 className="relative text-3xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-transparent whitespace-nowrap outline-text-front-mobile md:outline-text-front-desktop">
                 Content Creator
               </h2>
             </div>
           </div>
 
-          {/* Social Buttons - Original Style */}
-          <div className="flex gap-4 mt-4 relative z-50 pt-4 pb-8">
+          {/* Social Buttons - Desktop Only */}
+          <div className="hidden md:flex gap-4 mt-4 relative z-50 pt-4 pb-8">
             {socialLinks.map((link, index) => {
               const Icon = link.icon;
               return (
@@ -366,7 +373,7 @@ export default function Portfolio() {
         </div>
 
         {/* Right Side - Coder */}
-        <div className="flex-1 relative flex items-center justify-center md:justify-start md:pl-[25vw] p-8 z-10">
+        <div className="md:flex-1 relative flex items-center justify-center md:justify-start md:pl-[25vw] pt-2 pb-8 px-8 md:p-8 z-10">
           <div className="text-center md:text-left max-w-sm relative group">
 
             <div className="relative">
@@ -378,6 +385,24 @@ export default function Portfolio() {
               <p className="text-gray-900 font-medium text-sm md:text-base leading-relaxed">
                 Front End Developer who focuses on writing clean, elegant and efficient code
               </p>
+            </div>
+
+            {/* Social Buttons - Mobile Only */}
+            <div className="flex md:hidden justify-center gap-4 mt-8 relative z-50">
+              {socialLinks.map((link) => {
+                const Icon = link.icon;
+                return (
+                  <a
+                    key={link.name}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`group relative flex items-center justify-center p-3 rounded-full bg-gradient-to-br ${link.color} shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:scale-110 border border-white transform-gpu will-change-transform`}
+                  >
+                    <Icon className="h-6 w-6 text-white" />
+                  </a>
+                );
+              })}
             </div>
 
             {/* Code Snippet Decoration */}
@@ -430,11 +455,16 @@ export default function Portfolio() {
       </section>
 
       {/* Resume Section - Kept existing component */}
-      <section className="py-20 relative z-30">
+      <section className="pt-20 pb-28 md:py-20 relative z-30">
         <div className="container mx-auto px-6">
           <Resume />
         </div>
       </section>
+
+      {/* Footer / Copyright */}
+      <footer className="w-full text-center py-6 text-gray-400 text-sm md:text-base border-t border-gray-100 z-30 relative bg-white pb-24 md:pb-6">
+        <p>© 2026 Kaveeth Manodhya. All rights reserved.</p>
+      </footer>
 
     </div>
   );
