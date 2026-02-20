@@ -256,17 +256,27 @@ export default function Portfolio() {
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-white pt-20 px-6 md:hidden">
-          <div className="flex flex-col gap-6 text-xl text-gray-800 uppercase tracking-wider font-medium">
+        <div className="fixed inset-0 z-40 bg-white pt-20 px-6 md:hidden flex flex-col">
+          <div className="flex flex-col gap-6 text-xl text-gray-800 uppercase tracking-wider font-medium flex-1">
             <a href="#about" className="hover:text-black" onClick={() => setMobileMenuOpen(false)}>About</a>
             <a href="#experience" className="hover:text-black" onClick={() => setMobileMenuOpen(false)}>Experience</a>
             <a href="#education" className="hover:text-black" onClick={() => setMobileMenuOpen(false)}>Education</a>
+          </div>
+          <div className="flex gap-6 pb-20 justify-center">
+            {socialLinks.map((link) => {
+              const Icon = link.icon;
+              return (
+                <a key={link.name} href={link.url} className="text-gray-600 hover:text-black transition-colors" target="_blank" rel="noopener noreferrer">
+                  <Icon size={28} />
+                </a>
+              );
+            })}
           </div>
         </div>
       )}
 
       {/* Hero Section */}
-      <main className="relative flex flex-col md:flex-row min-h-screen pt-20 overflow-hidden">
+      <main className="relative flex flex-col md:flex-row min-h-screen pt-20">
 
         {/* Left Side - Designer */}
         <div className="flex-1 relative flex items-center justify-center md:justify-end md:pr-[25vw] p-8 z-10">
@@ -291,31 +301,53 @@ export default function Portfolio() {
 
 
 
-          <div className="relative w-[350px] h-[350px] md:w-[650px] md:h-[650px]">
+          <div className="relative w-[450px] h-[450px] max-w-[100vw] md:w-[min(950px,90vh)] md:h-[min(950px,90vh)] max-h-[100vh]">
             {/* Split Blur Effect */}
             <div className="absolute inset-0 z-0 flex items-center justify-center scale-110 opacity-60">
               <div className="w-full h-full bg-gradient-to-r from-pink-500 via-purple-500 to-transparent blur-[80px] -translate-x-10 rounded-full mix-blend-multiply"></div>
               <div className="w-full h-full bg-gradient-to-l from-cyan-400 via-blue-500 to-transparent blur-[80px] translate-x-10 rounded-full mix-blend-multiply"></div>
             </div>
 
-            {/* Vlogger Title - Overlapping Hair */}
-            <div className="absolute top-24 left-1/2 -translate-x-1/2 z-20 text-center w-full">
-              <h2 className="relative text-4xl md:text-5xl font-bold tracking-widest uppercase text-white drop-shadow-lg opacity-90">
-                Vlogger
+            {/* LAYER 1: Shadow for Base text (behind image) */}
+            <div className="absolute top-20 md:top-28 left-1/2 -translate-x-1/2 z-[4] text-center w-full pointer-events-none">
+              <h2 className="relative text-3xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-transparent drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] whitespace-nowrap" style={{ WebkitTextStroke: '2px rgba(255, 255, 255, 0.2)' }}>
+                Content Creator
               </h2>
             </div>
 
+            {/* LAYER 2: Base White Text (behind image) */}
+            <div className="absolute top-20 md:top-28 left-1/2 -translate-x-1/2 z-[5] text-center w-full pointer-events-none">
+              <h2 className="relative text-3xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.7)] whitespace-nowrap">
+                Content Creator
+              </h2>
+            </div>
+
+            {/* LAYER 3: The Image */}
             <Image
               src="/profile-v2.png"
               alt="Profile"
               fill
-              className="relative z-10 object-contain [mask-image:linear-gradient(to_bottom,black_50%,transparent_100%)] select-none pointer-events-none transform-gpu will-change-transform"
+              className="relative z-10 object-contain profile-mask select-none pointer-events-none transform-gpu will-change-transform scale-[1.1] md:scale-[1.15] translate-y-8 lg:translate-y-12"
               priority
             />
+
+            {/* LAYER 4: Blended Text (in front of image) */}
+            <div className="absolute top-20 md:top-28 left-1/2 -translate-x-1/2 z-20 text-center w-full mix-blend-overlay pointer-events-none">
+              <h2 className="relative text-3xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-white whitespace-nowrap">
+                Content Creator
+              </h2>
+            </div>
+
+            {/* LAYER 5: Stroke Outline (in front of image) */}
+            <div className="absolute top-20 md:top-28 left-1/2 -translate-x-1/2 z-30 text-center w-full pointer-events-none">
+              <h2 className="relative text-3xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-transparent whitespace-nowrap" style={{ WebkitTextStroke: '2px rgba(255, 255, 255, 0.8)' }}>
+                Content Creator
+              </h2>
+            </div>
           </div>
 
           {/* Social Buttons - Original Style */}
-          <div className="flex gap-4 mt-4">
+          <div className="flex gap-4 mt-4 relative z-50 pt-4 pb-8">
             {socialLinks.map((link, index) => {
               const Icon = link.icon;
               return (
@@ -384,8 +416,8 @@ export default function Portfolio() {
 
           {/* Second Profile Image */}
           <div className="flex-1 relative w-full aspect-square max-w-[350px]">
-            <div className="absolute inset-0 bg-gradient-to-tr from-blue-100 to-purple-100 rounded-3xl -rotate-6 transform"></div>
-            <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl">
+            <div className="absolute inset-0 bg-gradient-to-tr from-blue-100 to-purple-100 rounded-full -rotate-6 transform"></div>
+            <div className="relative w-full h-full rounded-full overflow-hidden shadow-2xl">
               <Image
                 src="/split_face_v2.png"
                 alt="Kaveeth Manodhya - About Me"
