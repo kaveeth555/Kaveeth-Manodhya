@@ -286,7 +286,7 @@ export default function Portfolio() {
       <main className="relative flex flex-col md:flex-row min-h-screen pt-20">
 
         {/* Left Side - Designer */}
-        <div className="md:flex-1 relative flex items-center justify-center md:justify-end md:pr-[25vw] pt-4 pb-0 px-8 md:p-8 z-10">
+        <div className="order-2 md:order-none md:flex-1 relative flex items-center justify-center md:justify-end md:pr-[25vw] pt-4 pb-0 px-8 md:p-8 z-10">
           <div className="text-center md:text-right max-w-sm relative group">
 
             <div className="relative">
@@ -303,7 +303,7 @@ export default function Portfolio() {
         </div>
 
         {/* Center Image & Vlogger */}
-        <div className="md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-20 w-full md:w-auto flex flex-col items-center justify-center pt-2 pb-8 md:py-0 gap-6">
+        <div className="order-1 md:order-none md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-20 w-full md:w-auto flex flex-col items-center justify-center pt-2 pb-8 md:py-0 gap-6">
 
 
 
@@ -334,7 +334,7 @@ export default function Portfolio() {
               src="/profile-v2.png"
               alt="Profile"
               fill
-              className="relative z-10 object-contain profile-mask select-none pointer-events-none transform-gpu will-change-transform scale-[1.1] md:scale-[1.15] translate-y-8 lg:translate-y-12"
+              className="relative z-10 object-contain profile-mask select-none pointer-events-none transform-gpu will-change-transform scale-[1.1] md:scale-[1.15] translate-y-4 lg:translate-y-8"
               priority
             />
 
@@ -373,7 +373,7 @@ export default function Portfolio() {
         </div>
 
         {/* Right Side - Coder */}
-        <div className="md:flex-1 relative flex items-center justify-center md:justify-start md:pl-[25vw] pt-2 pb-8 px-8 md:p-8 z-10">
+        <div className="order-3 md:order-none md:flex-1 relative flex items-center justify-center md:justify-start md:pl-[25vw] pt-2 pb-8 px-8 md:p-8 z-10">
           <div className="text-center md:text-left max-w-sm relative group">
 
             <div className="relative">
