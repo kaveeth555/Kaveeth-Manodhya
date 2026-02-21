@@ -416,14 +416,14 @@ export default function Portfolio() {
       <section id="about" className="pb-20 pt-10 relative z-30 font-sans mt-10 md:mt-24">
         <div className="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
           {/* Text Content */}
-          <div className="flex-1 space-y-6">
+          <div className="flex-1 space-y-6 bg-white/60 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-sm border border-white/80">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">
               About Me <span className="text-blue-600">.</span>
             </h2>
-            <p className="text-lg text-gray-600 leading-relaxed">
+            <p className="text-lg text-gray-800 leading-relaxed font-medium">
               I am an undergraduate at Wayamba University of Sri Lanka, a programmer, and a photographer working at the intersection of technology and digital media. By combining a strong technical background with a passion for cinematic storytelling, I build digital solutions and content designed to be experienced rather than just consumed. Whether I am developing software or producing high-quality tech reviews and travel vlogs for YouTube.
             </p>
-            <p className="text-lg text-gray-600 leading-relaxed">
+            <p className="text-lg text-gray-800 leading-relaxed font-medium">
               My goal is to merge strategic thinking with creative vision to build truly immersive digital experiences.
             </p>
           </div>
