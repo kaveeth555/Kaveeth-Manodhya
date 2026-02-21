@@ -282,11 +282,32 @@ export default function Portfolio() {
         </a>
       </div>
 
+      {/* Floating Social Buttons */}
+      <div
+        className="fixed right-4 md:right-6 top-1/2 -translate-y-1/2 flex flex-col gap-3 md:gap-4 z-[60] transition-all duration-500 opacity-100 translate-x-0"
+      >
+        {socialLinks.map((link) => {
+          const Icon = link.icon;
+          return (
+            <a
+              key={`floating-${link.name}`}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`group relative flex items-center justify-center p-2.5 md:p-3 rounded-full bg-gradient-to-br ${link.color} shadow-lg transition-all duration-300 hover:-translate-x-1 hover:shadow-xl hover:scale-110 border border-white`}
+              title={link.name}
+            >
+              <Icon className="h-5 w-5 md:h-6 md:w-6 text-white" />
+            </a>
+          );
+        })}
+      </div>
+
       {/* Hero Section */}
       <main className="relative flex flex-col md:flex-row min-h-screen pt-20">
 
         {/* Left Side - Designer */}
-        <div className="order-2 md:order-none md:flex-1 relative flex items-center justify-center md:justify-end md:pr-[25vw] pt-4 pb-0 px-8 md:p-8 z-10">
+        <div className="order-2 md:order-none md:flex-1 relative flex items-center justify-center md:justify-end md:pr-[16vw] xl:pr-[18vw] pt-4 pb-0 px-8 md:p-8 z-10">
           <div className="text-center md:text-right max-w-sm relative group">
 
             <div className="relative">
@@ -353,27 +374,11 @@ export default function Portfolio() {
             </div>
           </div>
 
-          {/* Social Buttons - Desktop Only */}
-          <div className="hidden md:flex gap-4 mt-4 relative z-50 pt-4 pb-8">
-            {socialLinks.map((link, index) => {
-              const Icon = link.icon;
-              return (
-                <a
-                  key={link.name}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`group relative flex items-center justify-center p-3 rounded-full bg-gradient-to-br ${link.color} shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:scale-110 border border-white transform-gpu will-change-transform`}
-                >
-                  <Icon className="h-6 w-6 text-white" />
-                </a>
-              );
-            })}
-          </div>
+
         </div>
 
         {/* Right Side - Coder */}
-        <div className="order-3 md:order-none md:flex-1 relative flex items-center justify-center md:justify-start md:pl-[25vw] pt-2 pb-8 px-8 md:p-8 z-10">
+        <div className="order-3 md:order-none md:flex-1 relative flex items-center justify-center md:justify-start md:pl-[16vw] xl:pl-[18vw] pt-2 pb-8 px-8 md:p-8 z-10">
           <div className="text-center md:text-left max-w-sm relative group">
 
             <div className="relative">
@@ -387,23 +392,7 @@ export default function Portfolio() {
               </p>
             </div>
 
-            {/* Social Buttons - Mobile Only */}
-            <div className="flex md:hidden justify-center gap-4 mt-8 relative z-50">
-              {socialLinks.map((link) => {
-                const Icon = link.icon;
-                return (
-                  <a
-                    key={link.name}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`group relative flex items-center justify-center p-3 rounded-full bg-gradient-to-br ${link.color} shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:scale-110 border border-white transform-gpu will-change-transform`}
-                  >
-                    <Icon className="h-6 w-6 text-white" />
-                  </a>
-                );
-              })}
-            </div>
+
 
             {/* Code Snippet Decoration */}
             <div className="absolute bottom-20 right-10 -z-10 opacity-10 font-mono text-xs hidden md:block text-blue-900">
@@ -424,7 +413,7 @@ export default function Portfolio() {
       </main>
 
       {/* About Me Section */}
-      <section id="about" className="py-20 relative z-30 font-sans bg-white/30 backdrop-blur-sm">
+      <section id="about" className="pb-20 pt-10 relative z-30 font-sans mt-10 md:mt-24">
         <div className="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
           {/* Text Content */}
           <div className="flex-1 space-y-6">
@@ -462,7 +451,7 @@ export default function Portfolio() {
       </section>
 
       {/* Footer / Copyright */}
-      <footer className="w-full text-center py-6 text-gray-400 text-sm md:text-base border-t border-gray-100 z-30 relative bg-white pb-24 md:pb-6">
+      <footer className="w-full text-center py-6 text-gray-400 text-sm md:text-base z-30 relative bg-white pb-24 md:pb-6">
         <p>© 2026 Kaveeth Manodhya. All rights reserved.</p>
       </footer>
 
