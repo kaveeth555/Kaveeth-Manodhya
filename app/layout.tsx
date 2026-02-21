@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "Portfolio",
   description: "Created by Kaveeth Manodya",
   icons: {
-    icon: '/icon.png',
+    icon: '/icon.png?v=4',
   },
 };
 
@@ -26,9 +26,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
         {children}
       </body>
