@@ -62,7 +62,7 @@ export default function Resume() {
   ];
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4 md:p-8 space-y-12">
+    <div className="w-full max-w-4xl mx-auto space-y-12">
 
       {/* Experience Section */}
       <section id="experience" className="space-y-6">

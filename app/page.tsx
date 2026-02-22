@@ -242,31 +242,15 @@ export default function Portfolio() {
 
       {/* Navigation */}
       <nav
-        className={`fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md text-gray-900 px-6 flex justify-between items-center border-b border-gray-200 transition-all duration-300 ${isScrolled ? 'py-2' : 'py-5'
+        className={`fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md text-gray-900 px-6 flex justify-center items-center border-b border-gray-200 transition-all duration-300 ${isScrolled ? 'py-2' : 'py-5'
           }`}
       >
-        <div className="text-2xl font-bold tracking-tight">
-          <div className="border-2 border-black rounded-full p-1 w-10 h-10 flex items-center justify-center">
-            <span>K</span>
-          </div>
-        </div>
-
         {/* Desktop Menu */}
         <div className="hidden md:flex gap-8 text-sm uppercase tracking-wider font-medium text-gray-600">
           <a href="#about" className="hover:text-black transition-colors">About</a>
           <a href="#experience" className="hover:text-black transition-colors">Experience</a>
           <a href="#education" className="hover:text-black transition-colors">Education</a>
         </div>
-
-        {/* Social Icons Desktop */}
-        <div className="hidden md:flex gap-4">
-          {socialLinks.map((link) => (
-            <a key={link.name} href={link.url} className="text-gray-600 hover:text-black transition-colors">
-              <link.icon size={18} />
-            </a>
-          ))}
-        </div>
-
       </nav>
 
       {/* Mobile Bottom Navigation (Footer) */}
@@ -397,10 +381,7 @@ export default function Portfolio() {
             {/* Code Snippet Decoration */}
             <div className="absolute bottom-20 right-10 -z-10 opacity-10 font-mono text-xs hidden md:block text-blue-900">
               <pre>{`
-                class Developer {
-                  constructor() {
-                    this.passion = "code";
-                    this.coffee = true;
+                
                   }
                 }
               `}</pre>
@@ -413,7 +394,7 @@ export default function Portfolio() {
       </main>
 
       {/* About Me Section */}
-      <section id="about" className="pb-20 pt-10 relative z-30 font-sans mt-10 md:mt-24">
+      <section id="about" className="pb-0 pt-10 relative z-30 font-sans">
         <div className="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
           {/* Text Content */}
           <div className="flex-1 space-y-6 bg-white/60 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-sm border border-white/80">
@@ -444,7 +425,7 @@ export default function Portfolio() {
       </section>
 
       {/* Resume Section - Kept existing component */}
-      <section className="pt-20 pb-28 md:py-20 relative z-30">
+      <section className="pt-0 pb-28 md:pt-14 md:pb-20 relative z-30">
         <div className="container mx-auto px-6">
           <Resume />
         </div>
