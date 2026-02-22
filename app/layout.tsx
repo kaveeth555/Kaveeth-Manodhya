@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "Portfolio",
   description: "Created by Kaveeth Manodya",
   icons: {
-    icon: '/icon.png?v=4',
+    icon: '/icon.png?v=5',
   },
 };
 
