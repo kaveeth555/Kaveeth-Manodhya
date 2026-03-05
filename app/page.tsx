@@ -260,7 +260,7 @@ export default function Portfolio() {
 
       {/* Navigation */}
       <nav
-        className={`fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md text-gray-900 px-6 flex justify-center items-center border-b border-gray-200 transition-all duration-300 ${isScrolled ? 'py-2' : 'py-5'
+        className={`fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md text-gray-900 px-6 hidden md:flex justify-center items-center border-b border-gray-200 transition-all duration-300 ${isScrolled ? 'py-2' : 'py-5'
           }`}
       >
         {/* Desktop Menu */}
@@ -273,7 +273,7 @@ export default function Portfolio() {
       </nav>
 
       {/* Mobile Bottom Navigation (Footer) */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 z-50 py-4 px-6 flex justify-center gap-8 items-center text-sm uppercase tracking-wider font-semibold text-gray-500 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 z-50 py-4 px-2 sm:px-6 flex justify-around gap-2 sm:gap-6 items-center text-[10px] min-[375px]:text-xs sm:text-sm uppercase tracking-wider font-semibold text-gray-500 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
         <a href="#about" className="hover:text-black transition-colors">
           About
         </a>
@@ -359,7 +359,7 @@ export default function Portfolio() {
               transition={{ duration: 1, ease: "easeOut", delay: 1 }}
               className="absolute top-12 md:top-28 left-1/2 z-[4] text-center w-full pointer-events-none"
             >
-              <h2 className="relative text-4xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-transparent drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] whitespace-nowrap outline-text-mobile md:outline-text-desktop">
+              <h2 className="relative text-3xl min-[400px]:text-4xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-transparent drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] whitespace-nowrap outline-text-mobile md:outline-text-desktop">
                 Content Creator
               </h2>
             </motion.div>
@@ -371,7 +371,7 @@ export default function Portfolio() {
               transition={{ duration: 1, ease: "easeOut", delay: 1 }}
               className="absolute top-12 md:top-28 left-1/2 z-[5] text-center w-full pointer-events-none"
             >
-              <h2 className="relative text-4xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.7)] whitespace-nowrap">
+              <h2 className="relative text-3xl min-[400px]:text-4xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.7)] whitespace-nowrap">
                 Content Creator
               </h2>
             </motion.div>
@@ -392,7 +392,7 @@ export default function Portfolio() {
               transition={{ duration: 1, ease: "easeOut", delay: 1 }}
               className="absolute top-12 md:top-28 left-1/2 z-20 text-center w-full mix-blend-overlay pointer-events-none"
             >
-              <h2 className="relative text-4xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-white whitespace-nowrap">
+              <h2 className="relative text-3xl min-[400px]:text-4xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-white whitespace-nowrap">
                 Content Creator
               </h2>
             </motion.div>
@@ -404,7 +404,7 @@ export default function Portfolio() {
               transition={{ duration: 1, ease: "easeOut", delay: 1 }}
               className="absolute top-12 md:top-28 left-1/2 z-30 text-center w-full pointer-events-none"
             >
-              <h2 className="relative text-4xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-transparent whitespace-nowrap outline-text-front-mobile md:outline-text-front-desktop">
+              <h2 className="relative text-3xl min-[400px]:text-4xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-transparent whitespace-nowrap outline-text-front-mobile md:outline-text-front-desktop">
                 Content Creator
               </h2>
             </motion.div>
