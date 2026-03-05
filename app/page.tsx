@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Github, Youtube, Facebook, Linkedin, Mail, Twitter, Globe } from 'lucide-react';
 import Resume from '../components/Resume';
+import Projects from '../components/Projects';
 
 export default function Portfolio() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -248,6 +249,7 @@ export default function Portfolio() {
         {/* Desktop Menu */}
         <div className="hidden md:flex gap-8 text-sm uppercase tracking-wider font-medium text-gray-600">
           <a href="#about" className="hover:text-black transition-colors">About</a>
+          <a href="#projects" className="hover:text-black transition-colors">Projects</a>
           <a href="#experience" className="hover:text-black transition-colors">Experience</a>
           <a href="#education" className="hover:text-black transition-colors">Education</a>
         </div>
@@ -257,6 +259,9 @@ export default function Portfolio() {
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 z-50 py-4 px-6 flex justify-center gap-8 items-center text-sm uppercase tracking-wider font-semibold text-gray-500 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
         <a href="#about" className="hover:text-black transition-colors">
           About
+        </a>
+        <a href="#projects" className="hover:text-black transition-colors">
+          Projects
         </a>
         <a href="#experience" className="hover:text-black transition-colors">
           Experience
@@ -421,6 +426,13 @@ export default function Portfolio() {
               />
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Projects Section */}
+      <section className="pt-20 pb-14 md:pt-28 md:pb-14 relative z-30">
+        <div className="container mx-auto px-6">
+          <Projects />
         </div>
       </section>
 
