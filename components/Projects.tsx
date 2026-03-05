@@ -11,7 +11,7 @@ export default function Projects() {
             category: 'Web Development',
             url: 'https://alphacrewweb.vercel.app',
             githubUrl: 'https://github.com/kaveeth555/ALPHA-Crew-Website', // Update if necessary
-            image: '/alpha-crew.png?v=1', // using the existing logo as placeholder, or we can use another image if available
+            image: '/alpha-crew.png', // using the existing logo as placeholder, or we can use another image if available
             description: 'The official portfolio website for Alpha Crew Photography. Built to showcase a creative photography brand focused on event, portrait, and lifestyle photography.',
             tags: ['Next.js', 'React', 'Tailwind CSS']
         },
@@ -55,7 +55,7 @@ export default function Projects() {
                                                 alt={project.title}
                                                 fill
                                                 className="object-contain"
-                                                unoptimized
+                                                sizes="56px"
                                             />
                                         </div>
                                     )}

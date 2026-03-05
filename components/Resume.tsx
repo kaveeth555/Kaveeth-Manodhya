@@ -10,7 +10,7 @@ export default function Resume() {
       company: 'Alpha Crew Photography',
       role: 'Founder & Photographer',
       url: 'https://alphacrewweb.vercel.app',
-      logo: '/alpha-crew.png?v=1',
+      logo: '/alpha-crew.png',
       period: 'January 2023 - Present (3 years 2 months)',
       location: 'Meerigama, Western Province, Sri Lanka',
       description: [
@@ -24,7 +24,7 @@ export default function Resume() {
       company: 'Newgen Lanka Healthcare (Pvt) Ltd',
       role: 'Quality Assurance (QA) Trainee',
       url: '',
-      logo: '/newgen_lanka.png?v=1',
+      logo: '/newgen_lanka.png',
       period: 'January 2025 - February 2025 (2 months)',
       location: 'Sri Lanka',
       description: [
@@ -39,13 +39,13 @@ export default function Resume() {
     {
       institution: 'Wayamba University of Sri Lanka',
       degree: 'B.Sc., Applied Sciences',
-      logo: '/wayamba_uni.png?v=2',
+      logo: '/wayamba_uni.png',
       period: 'June 2025'
     },
     {
       institution: 'Bandaranayake College - Gampaha',
       degree: 'Secondary Education',
-      logo: '/bandaranayake_college.png?v=2',
+      logo: '/bandaranayake_college.png',
       period: 'January 2013 - November 2021'
     }
   ];
@@ -93,7 +93,7 @@ export default function Resume() {
                           alt={exp.company}
                           fill
                           className="object-contain"
-                          unoptimized
+                          sizes="48px"
                         />
                       </div>
                     )}
@@ -170,7 +170,7 @@ export default function Resume() {
                         alt={edu.institution}
                         fill
                         className="object-contain"
-                        unoptimized
+                        sizes="48px"
                       />
                     </div>
                   )}
