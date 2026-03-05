@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Github, Youtube, Facebook, Linkedin, Mail, Twitter, Globe } from 'lucide-react';
+import { motion } from 'framer-motion';
 import Resume from '../components/Resume';
 import Projects from '../components/Projects';
 
@@ -60,6 +61,22 @@ export default function Portfolio() {
 
     // Check initial scroll position
     handleScroll();
+
+    // Prevent browser from restoring scroll position
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+
+    // Force scroll to top on mount
+    window.scrollTo(0, 0);
+
+    // If there's a hash in the URL (like #about), remove it without reloading so it doesn't jump
+    if (window.location.hash) {
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }, 10);
+    }
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
@@ -296,7 +313,12 @@ export default function Portfolio() {
       <main className="relative flex flex-col md:flex-row min-h-screen pt-20">
 
         {/* Left Side - Designer */}
-        <div className="order-2 md:order-none md:flex-1 relative flex items-center justify-center md:justify-end md:pr-[16vw] xl:pr-[18vw] pt-4 pb-0 px-8 md:p-8 z-10">
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+          className="order-2 md:order-none md:flex-1 relative flex items-center justify-center md:justify-end md:pr-[16vw] xl:pr-[18vw] pt-4 pb-0 px-8 md:p-8 z-10"
+        >
           <div className="text-center md:text-right max-w-sm relative group">
 
             <div className="relative">
@@ -310,10 +332,15 @@ export default function Portfolio() {
             {/* Artistic Paint Splash Decoration */}
             <div className="absolute top-1/2 left-10 w-32 h-32 bg-purple-200 blur-2xl rounded-full -z-10 mix-blend-multiply opacity-70"></div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Center Image & Vlogger */}
-        <div className="order-1 md:order-none md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-20 w-full md:w-auto flex flex-col items-center justify-center pt-2 pb-8 md:py-0 gap-6">
+        <motion.div
+          initial={{ opacity: 0, y: 50, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
+          className="order-1 md:order-none md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-20 w-full md:w-auto flex flex-col items-center justify-center pt-2 pb-8 md:py-0 gap-6"
+        >
 
 
 
@@ -326,48 +353,72 @@ export default function Portfolio() {
             </div>
 
             {/* LAYER 1: Shadow for Base text (behind image) */}
-            <div className="absolute top-20 md:top-28 left-1/2 -translate-x-1/2 z-[4] text-center w-full pointer-events-none">
-              <h2 className="relative text-3xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-transparent drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] whitespace-nowrap outline-text-mobile md:outline-text-desktop">
+            <motion.div
+              initial={{ opacity: 0, x: "-150%" }}
+              animate={{ opacity: 1, x: "-50%" }}
+              transition={{ duration: 1, ease: "easeOut", delay: 1 }}
+              className="absolute top-12 md:top-28 left-1/2 z-[4] text-center w-full pointer-events-none"
+            >
+              <h2 className="relative text-4xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-transparent drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] whitespace-nowrap outline-text-mobile md:outline-text-desktop">
                 Content Creator
               </h2>
-            </div>
+            </motion.div>
 
             {/* LAYER 2: Base White Text (behind image) */}
-            <div className="absolute top-20 md:top-28 left-1/2 -translate-x-1/2 z-[5] text-center w-full pointer-events-none">
-              <h2 className="relative text-3xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.7)] whitespace-nowrap">
+            <motion.div
+              initial={{ opacity: 0, x: "-150%" }}
+              animate={{ opacity: 1, x: "-50%" }}
+              transition={{ duration: 1, ease: "easeOut", delay: 1 }}
+              className="absolute top-12 md:top-28 left-1/2 z-[5] text-center w-full pointer-events-none"
+            >
+              <h2 className="relative text-4xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.7)] whitespace-nowrap">
                 Content Creator
               </h2>
-            </div>
+            </motion.div>
 
             {/* LAYER 3: The Image */}
             <Image
               src="/profile-v2.png"
               alt="Profile"
               fill
-              className="relative z-10 object-contain profile-mask select-none pointer-events-none transform-gpu will-change-transform scale-[1.1] md:scale-[1.15] translate-y-4 lg:translate-y-8"
+              className="relative z-10 object-contain profile-mask select-none pointer-events-none transform-gpu will-change-transform scale-[1.1] md:scale-[1.15] -translate-y-8 lg:translate-y-8"
               priority
             />
 
             {/* LAYER 4: Blended Text (in front of image) */}
-            <div className="absolute top-20 md:top-28 left-1/2 -translate-x-1/2 z-20 text-center w-full mix-blend-overlay pointer-events-none">
-              <h2 className="relative text-3xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-white whitespace-nowrap">
+            <motion.div
+              initial={{ opacity: 0, x: "-150%" }}
+              animate={{ opacity: 1, x: "-50%" }}
+              transition={{ duration: 1, ease: "easeOut", delay: 1 }}
+              className="absolute top-12 md:top-28 left-1/2 z-20 text-center w-full mix-blend-overlay pointer-events-none"
+            >
+              <h2 className="relative text-4xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-white whitespace-nowrap">
                 Content Creator
               </h2>
-            </div>
+            </motion.div>
 
             {/* LAYER 5: Stroke Outline (in front of image) */}
-            <div className="absolute top-20 md:top-28 left-1/2 -translate-x-1/2 z-30 text-center w-full pointer-events-none">
-              <h2 className="relative text-3xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-transparent whitespace-nowrap outline-text-front-mobile md:outline-text-front-desktop">
+            <motion.div
+              initial={{ opacity: 0, x: "-150%" }}
+              animate={{ opacity: 1, x: "-50%" }}
+              transition={{ duration: 1, ease: "easeOut", delay: 1 }}
+              className="absolute top-12 md:top-28 left-1/2 z-30 text-center w-full pointer-events-none"
+            >
+              <h2 className="relative text-4xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-transparent whitespace-nowrap outline-text-front-mobile md:outline-text-front-desktop">
                 Content Creator
               </h2>
-            </div>
+            </motion.div>
           </div>
 
-
-        </div>
+        </motion.div>
 
         {/* Right Side - Coder */}
-        <div className="order-3 md:order-none md:flex-1 relative flex items-center justify-center md:justify-start md:pl-[16vw] xl:pl-[18vw] pt-2 pb-8 px-8 md:p-8 z-10">
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+          className="order-3 md:order-none md:flex-1 relative flex items-center justify-center md:justify-start md:pl-[16vw] xl:pl-[18vw] pt-2 pb-8 px-8 md:p-8 z-10"
+        >
           <div className="text-center md:text-left max-w-sm relative group">
 
             <div className="relative">
@@ -394,7 +445,7 @@ export default function Portfolio() {
 
             <div className="absolute top-1/4 left-10 w-40 h-40 bg-blue-100 blur-3xl rounded-full -z-10 opacity-70"></div>
           </div>
-        </div>
+        </motion.div>
 
       </main>
 
