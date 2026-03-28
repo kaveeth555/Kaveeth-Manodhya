@@ -9,8 +9,39 @@ import Projects from '../components/Projects';
 
 export default function Portfolio() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [viewCount, setViewCount] = useState<string>('---');
+  const [isAdmin, setIsAdmin] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mousePos = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    // Check locally if user unlocked admin view
+    if (typeof window !== 'undefined' && localStorage.getItem('portfolio_k_admin') === 'true') {
+      setIsAdmin(true);
+    }
+
+    // Always fetch so the view count increments on the backend
+    fetch('/api/views')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.count) {
+          setViewCount(data.count);
+        }
+      })
+      .catch(err => console.error("Could not fetch view count", err));
+  }, []);
+
+  const handleSecretClick = () => {
+    const newState = !isAdmin;
+    setIsAdmin(newState);
+    if (typeof window !== 'undefined') {
+      if (newState) {
+        localStorage.setItem('portfolio_k_admin', 'true');
+      } else {
+        localStorage.removeItem('portfolio_k_admin');
+      }
+    }
+  };
 
   const socialLinks = [
     {
@@ -495,8 +526,52 @@ export default function Portfolio() {
       </section>
 
       {/* Footer / Copyright */}
-      <footer className="w-full text-center py-6 text-gray-400 text-sm md:text-base z-30 relative bg-white pb-24 md:pb-6">
-        <p>© 2026 Kaveeth Manodhya. All rights reserved.</p>
+      <footer className="w-full flex flex-col items-center justify-center gap-6 py-10 text-gray-400 text-sm md:text-base z-30 relative bg-white pb-28 md:pb-12 overflow-hidden">
+
+        {/* Background ambient liquid glow for footer */}
+        <div className="absolute bottom-1/2 left-1/2 -translate-x-1/2 translate-y-1/2 w-48 h-24 bg-gradient-to-r from-blue-300 via-purple-300 to-cyan-300 rounded-full blur-3xl opacity-30 pointer-events-none"></div>
+
+        {/* View Counter Badge - Hidden by default, visible to admin */}
+        {isAdmin && (
+          <div className="relative group cursor-default z-10 w-auto">
+            {/* Animated liquid background blobs that react on hover */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500 rounded-full blur opacity-20 group-hover:opacity-60 transition duration-700 animate-pulse"></div>
+
+            {/* Glass pill container outer border */}
+            <div className="relative flex items-center justify-center p-[1px] rounded-full bg-gradient-to-b from-white/80 to-white/20 shadow-[0_8px_32px_0_rgba(100,100,255,0.1)] group-hover:shadow-[0_12px_40px_0_rgba(100,100,255,0.2)] group-hover:-translate-y-1 transition-all duration-300">
+              {/* Glass pill inner surface - Reduced padding to make it smaller */}
+              <div className="flex items-center justify-center pl-4 pr-1.5 py-1.5 bg-white/60 backdrop-blur-2xl rounded-full border border-white/80">
+
+                {/* Glass sheen overlay */}
+                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+                {/* Label Text */}
+                <div className="flex items-center justify-center mr-3 z-10 pt-0.5">
+                  <span className="text-[10px] sm:text-xs font-bold text-gray-700 tracking-widest uppercase leading-none drop-shadow-sm">
+                    Profile Views
+                  </span>
+                </div>
+
+                {/* Number Pill - Adjusted padding and sizing */}
+                <div className="relative flex items-center justify-center min-w-[3rem] px-3 py-1 bg-blue-500/10 rounded-full border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors z-10">
+                  <span className="text-xs font-bold text-blue-600 font-mono tracking-tight leading-none drop-shadow-sm">
+                    {viewCount}
+                  </span>
+                  {/* Subtle shine over the number block */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-white/30 pointer-events-none mix-blend-overlay rounded-full"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <p
+          className="z-10 relative mt-2 cursor-default select-none transition-colors hover:text-gray-500"
+          onDoubleClick={handleSecretClick}
+          title="© 2026 Kaveeth Manodhya"
+        >
+          © 2026 Kaveeth Manodhya. All rights reserved.
+        </p>
       </footer>
 
     </div>
