@@ -13,7 +13,7 @@ export default function Projects() {
             githubUrl: 'https://github.com/kaveeth555/ALPHA-Crew-Website', // Update if necessary
             image: '/alpha-crew.png', // using the existing logo as placeholder, or we can use another image if available
             description: 'The official portfolio website for Alpha Crew Photography. Built to showcase a creative photography brand focused on event, portrait, and lifestyle photography.',
-            tags: ['Next.js', 'React', 'Tailwind CSS']
+            tags: ['Next.js', 'React','Cloudinary', 'Tailwind CSS']
         },
         {
             title: 'Portfolio Website',
@@ -23,6 +23,15 @@ export default function Projects() {
             image: '/profile-v2.png', // Or another appropriate image
             description: 'A personal portfolio website showcasing my skills, projects, and professional experience as a developer and designer.',
             tags: ['Next.js', 'React', 'Tailwind CSS', 'Framer Motion'] // Or similar tags
+        },
+        {
+            title: 'Kodexlk',
+            category: 'Web Development',
+            url: 'https://kodexlk.online',
+            githubUrl: 'https://github.com/kaveethmanodhya/Kodexlk',
+            image: '/kodexlk-logo.webp',
+            description: 'A modern, high-performance web platform and admin dashboard built for Kodexlk.',
+            tags: ['Next.js', 'React', 'Tailwind CSS', 'MongoDB', 'Cloudinary', 'Framer Motion']
         }
     ];
 
