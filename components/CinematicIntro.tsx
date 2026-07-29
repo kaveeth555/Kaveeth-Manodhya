@@ -43,7 +43,7 @@ export default function CinematicIntro({ onComplete }: { onComplete: () => void 
   // Preload profile image
   useEffect(() => {
     const img = new Image();
-    img.src = '/profile-v2.png';
+    img.src = '/profile-v2.webp';
     img.onload = () => { imageLoaded.current = img; };
   }, []);
 

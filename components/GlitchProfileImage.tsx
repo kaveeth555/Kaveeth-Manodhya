@@ -136,7 +136,7 @@ export default function GlitchProfileImage({ startGlitch }: { startGlitch: boole
       {/* Initial Glitch Phase */}
       {phase === 'initial_glitch' && (
         <motion.div
-          animate={initialGlitchAnim}
+          animate={initialGlitchAnim as any}
           style={{ width: '100%', height: '100%', position: 'absolute', zIndex: 3 }}
         >
           <div style={{ position: 'absolute', inset: 0, clipPath: 'polygon(0 0, 100% 0, 100% 30%, 0 30%)', transform: 'translateX(-10px)', filter: 'hue-rotate(90deg)' }}>
@@ -154,7 +154,7 @@ export default function GlitchProfileImage({ startGlitch }: { startGlitch: boole
       {/* Intense Glitch Phase (Replaces Dust) */}
       {phase === 'intense_glitch' && (
         <motion.div
-          animate={intenseGlitchAnim}
+          animate={intenseGlitchAnim as any}
           style={{ width: '100%', height: '100%', position: 'absolute', zIndex: 3 }}
         >
           <div style={{ position: 'absolute', inset: 0, clipPath: 'polygon(0 0, 100% 0, 100% 25%, 0 25%)', transform: 'translateX(25px)' }}>
@@ -209,7 +209,7 @@ export default function GlitchProfileImage({ startGlitch }: { startGlitch: boole
       {/* Glitch In Phase */}
       {phase === 'glitching_in' && (
         <motion.div
-          animate={glitchInAnim}
+          animate={glitchInAnim as any}
           style={{ width: '100%', height: '100%', position: 'absolute', zIndex: 3 }}
         >
           <div style={{ position: 'absolute', inset: 0, clipPath: 'polygon(0 0, 100% 0, 100% 40%, 0 40%)', transform: 'translateX(15px)', filter: 'hue-rotate(-90deg)' }}>
