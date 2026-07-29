@@ -1,59 +1,277 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Core palette */
+  --bg-primary: #080808;
+  --bg-secondary: #0f0f0f;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 255, 255, 0.07);
+
+  /* Border */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.15);
+  --border-bright: rgba(255, 255, 255, 0.3);
+
+  /* Text */
+  --text-primary: #f0f0f0;
+  --text-secondary: rgba(240, 240, 240, 0.55);
+  --text-muted: rgba(240, 240, 240, 0.3);
+
+  /* Accents */
+  --accent-blue: #4f8ef7;
+  --accent-purple: #a259ff;
+  --accent-cyan: #00d4ff;
+  --accent-pink: #ff4d8d;
+  --accent-green: #00e5a0;
+
+  /* Gradients */
+  --grad-hero: linear-gradient(135deg, #4f8ef7 0%, #a259ff 50%, #ff4d8d 100%);
+  --grad-blue-purple: linear-gradient(135deg, #4f8ef7 0%, #a259ff 100%);
+  --grad-purple-pink: linear-gradient(135deg, #a259ff 0%, #ff4d8d 100%);
+
+  /* Fonts */
+  --font-display: 'Clash Display', 'Space Grotesk', sans-serif;
+  --font-body: 'Space Grotesk', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+
+  /* Spacing */
+  --section-padding: clamp(80px, 12vw, 160px);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ---- Reset & Base ---- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #ffffff;
-    --foreground: #171717;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-mono), monospace;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
+/* Override all previous monospace forcing */
 * {
-  font-family: var(--font-geist-mono), monospace !important;
+  font-family: var(--font-body) !important;
 }
 
+h1, h2, h3, .font-display {
+  font-family: var(--font-display) !important;
+  letter-spacing: -0.02em;
+}
+
+/* ---- Selection ---- */
+::selection {
+  background: rgba(79, 142, 247, 0.3);
+  color: #fff;
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: 2px;
+}
+
+/* ---- Lenis smooth scroll ---- */
+html.lenis {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* ---- Profile mask (preserved for hero image) ---- */
 .profile-mask {
   -webkit-mask-image:
-    linear-gradient(to bottom, black 60%, transparent 100%),
-    linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
+    linear-gradient(to bottom, black 55%, transparent 100%),
+    linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
   -webkit-mask-composite: source-in;
   mask-image:
-    linear-gradient(to bottom, black 60%, transparent 100%),
-    linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
+    linear-gradient(to bottom, black 55%, transparent 100%),
+    linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
   mask-composite: intersect;
 }
 
+/* ---- Outline text (kept for compatibility) ---- */
 .outline-text-mobile {
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.15);
 }
-
 .outline-text-front-mobile {
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.8);
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.7);
 }
-
 @media (min-width: 768px) {
   .md\:outline-text-desktop {
-    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.2);
+    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.15);
   }
-
   .md\:outline-text-front-desktop {
-    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.8);
+    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.7);
+  }
+}
+
+/* ---- Glass card base ---- */
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+.glass-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-medium);
+}
+
+/* ---- Gradient text ---- */
+.gradient-text {
+  background: var(--grad-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.gradient-text-blue {
+  background: var(--grad-blue-purple);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ---- Section title ---- */
+.section-number {
+  font-family: var(--font-mono) !important;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* ---- Noise overlay ---- */
+.noise-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.4;
+  z-index: 0;
+}
+
+/* ---- Animated gradient border ---- */
+@keyframes border-rotate {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animated-border {
+  background: linear-gradient(270deg, var(--accent-blue), var(--accent-purple), var(--accent-pink), var(--accent-cyan));
+  background-size: 400% 400%;
+  animation: border-rotate 6s ease infinite;
+}
+
+/* ---- Glow effects ---- */
+.glow-blue {
+  box-shadow: 0 0 40px rgba(79, 142, 247, 0.2);
+}
+.glow-purple {
+  box-shadow: 0 0 40px rgba(162, 89, 255, 0.2);
+}
+
+/* ---- Clip reveal (GSAP text mask) ---- */
+.clip-reveal-wrapper {
+  overflow: hidden;
+  display: block;
+}
+
+/* ---- Tag pill ---- */
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255,255,255,0.04);
+  font-size: 0.7rem;
+  font-family: var(--font-mono) !important;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  transition: border-color 0.2s, color 0.2s;
+}
+.tag-pill:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+/* ---- Divider line ---- */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+/* ---- Cursor blink ---- */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* ---- Scroll indicator bounce ---- */
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+.bounce-slow {
+  animation: bounce-slow 2s ease-in-out infinite;
+}
+
+/* ---- Fade in up (fallback for no-GSAP) ---- */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up {
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+/* ---- Visibility Utilities ---- */
+.hide-on-mobile {
+  display: none !important;
+}
+@media (min-width: 768px) {
+  .hide-on-mobile {
+    display: flex !important;
+  }
+}
+
+.hide-on-desktop {
+  display: flex !important;
+}
+@media (min-width: 768px) {
+  .hide-on-desktop {
+    display: none !important;
   }
 }

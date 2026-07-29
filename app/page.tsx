@@ -1,579 +1,323 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
-import { Github, Youtube, Facebook, Linkedin, Mail, Twitter, Globe } from 'lucide-react';
+import { Github, Youtube, Facebook, Linkedin, ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
-import Resume from '../components/Resume';
-import Projects from '../components/Projects';
+import Lenis from 'lenis';
+import dynamic from 'next/dynamic';
+
+// Lazy loaded components for better performance
+const CinematicIntro = dynamic(() => import('../components/CinematicIntro'), { ssr: false });
+const GlitchProfileImage = dynamic(() => import('../components/GlitchProfileImage'), { ssr: false });
+const Resume = dynamic(() => import('../components/Resume'));
+const Projects = dynamic(() => import('../components/Projects'));
+const Services = dynamic(() => import('../components/Services'));
+const Contact = dynamic(() => import('../components/Contact'));
 
 export default function Portfolio() {
+  const [introComplete, setIntroComplete] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [viewCount, setViewCount] = useState<string>('---');
   const [isAdmin, setIsAdmin] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mousePos = useRef({ x: 0, y: 0 });
 
-  useEffect(() => {
-    // Check locally if user unlocked admin view
-    if (typeof window !== 'undefined' && localStorage.getItem('portfolio_k_admin') === 'true') {
-      setIsAdmin(true);
-    }
+  const handleIntroComplete = useCallback(() => {
+    setIntroComplete(true);
+  }, []);
 
-    // Always fetch so the view count increments on the backend
-    fetch('/api/views')
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.count) {
-          setViewCount(data.count);
-        }
-      })
-      .catch(err => console.error("Could not fetch view count", err));
+  // Admin & view count
+  useEffect(() => {
+    if (typeof window !== 'undefined' && localStorage.getItem('portfolio_k_admin') === 'true') setIsAdmin(true);
+    fetch('/api/views').then(r => r.json()).then(d => { if (d?.count) setViewCount(d.count); }).catch(() => {});
   }, []);
 
   const handleSecretClick = () => {
-    const newState = !isAdmin;
-    setIsAdmin(newState);
-    if (typeof window !== 'undefined') {
-      if (newState) {
-        localStorage.setItem('portfolio_k_admin', 'true');
-      } else {
-        localStorage.removeItem('portfolio_k_admin');
-      }
-    }
+    const s = !isAdmin; setIsAdmin(s);
+    if (typeof window !== 'undefined') { s ? localStorage.setItem('portfolio_k_admin', 'true') : localStorage.removeItem('portfolio_k_admin'); }
   };
 
   const socialLinks = [
-    {
-      name: 'GitHub',
-      url: 'https://github.com/kaveeth555',
-      icon: Github,
-      color: 'from-slate-600 to-slate-800',
-      hoverColor: 'hover:shadow-slate-500/50'
-    },
-    {
-      name: 'YouTube',
-      url: 'https://www.youtube.com/@MrKavvyOfficial',
-      icon: Youtube,
-      color: 'from-red-600 to-red-800',
-      hoverColor: 'hover:shadow-red-500/50'
-    },
-    {
-      name: 'LinkedIn',
-      url: 'https://www.linkedin.com/in/kaveeth-manodhya-b3917330a',
-      icon: Linkedin,
-      color: 'from-blue-700 to-blue-900',
-      hoverColor: 'hover:shadow-blue-600/50'
-    },
-    {
-      name: 'Facebook',
-      url: 'https://www.facebook.com/profile.php?id=61574217495649',
-      icon: Facebook,
-      color: 'from-blue-600 to-blue-800',
-      hoverColor: 'hover:shadow-blue-500/50'
-    }
+    { name: 'GitHub', url: 'https://github.com/kaveeth555', icon: Github, accent: '#a259ff' },
+    { name: 'YouTube', url: 'https://www.youtube.com/@MrKavvyOfficial', icon: Youtube, accent: '#ff4d8d' },
+    { name: 'LinkedIn', url: 'https://www.linkedin.com/in/kaveeth-manodhya-b3917330a', icon: Linkedin, accent: '#4f8ef7' },
+    { name: 'Facebook', url: 'https://www.facebook.com/profile.php?id=61574217495649', icon: Facebook, accent: '#4f8ef7' },
   ];
 
+  const navItems = [
+    { label: 'About', href: '#about' },
+    { label: 'Services', href: '#services' },
+    { label: 'Projects', href: '#projects' },
+    { label: 'Experience', href: '#experience' },
+    { label: 'Contact', href: '#contact' },
+  ];
+
+  // Lenis smooth scroll
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      mousePos.current = { x: e.clientX, y: e.clientY };
-    };
+    if (!introComplete) return;
+    const lenis = new Lenis({ duration: 1.2, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+    function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+    return () => lenis.destroy();
+  }, [introComplete]);
 
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll);
-
-    // Check initial scroll position
-    handleScroll();
-
-    // Prevent browser from restoring scroll position
-    if ('scrollRestoration' in history) {
-      history.scrollRestoration = 'manual';
-    }
-
-    // Force scroll to top on mount
+  // Scroll listener
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 50);
+    const onMouse = (e: MouseEvent) => { mousePos.current = { x: e.clientX, y: e.clientY }; };
+    window.addEventListener('scroll', onScroll);
+    window.addEventListener('mousemove', onMouse);
+    onScroll();
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     window.scrollTo(0, 0);
-
-    // If there's a hash in the URL (like #about), remove it without reloading so it doesn't jump
-    if (window.location.hash) {
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        history.replaceState(null, '', window.location.pathname + window.location.search);
-      }, 10);
-    }
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('mousemove', onMouse); };
   }, []);
 
-
-  // Interactive Background Logic
+  // Interactive canvas bg
   useEffect(() => {
+    if (!introComplete) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
-    let animationFrameId: number;
-    let points: Point[] = [];
-    const spacing = 40;
-    const influenceRadius = 250; // Increased for smoother gradient
-    const visibilityRadius = 350; // Larger than influence to fade in before moving
-    const returnSpeed = 0.02; // Slower for "liquid" feel
-
-    const colors = [
-      '239, 68, 68',   // Red-500
-      '34, 197, 94',   // Green-500
-      '59, 130, 246',  // Blue-500
-      '234, 179, 8',   // Yellow-500
-      '236, 72, 153',  // Pink-500
-      '168, 85, 247',  // Purple-500
-      '6, 182, 212',   // Cyan-500
-      '249, 115, 22',  // Orange-500
-    ];
-
-    class Point {
-      x: number;
-      y: number;
-      originX: number;
-      originY: number;
-      vx: number;
-      vy: number;
-      color: string;
-
-      constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-        this.originX = x;
-        this.originY = y;
-        this.vx = 0;
-        this.vy = 0;
-        this.color = colors[Math.floor(Math.random() * colors.length)];
-      }
-
-      update(mouse: { x: number, y: number }) {
-        const dx = mouse.x - this.x;
-        const dy = mouse.y - this.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        // Repel mouse (Resistance)
-        if (dist < influenceRadius) {
-          const force = (influenceRadius - dist) / influenceRadius;
-          const angle = Math.atan2(dy, dx);
-          // Move away from mouse with eased force
-          const easeForce = force * force;
-          this.vx -= Math.cos(angle) * easeForce * 2.5;
-          this.vy -= Math.sin(angle) * easeForce * 2.5;
-        }
-
-        // Return to origin
-        this.vx += (this.originX - this.x) * returnSpeed;
-        this.vy += (this.originY - this.y) * returnSpeed;
-
-        // Damping
-        this.vx *= 0.92;
-        this.vy *= 0.92;
-
-        this.x += this.vx;
-        this.y += this.vy;
-      }
-
-      draw(mouse: { x: number, y: number }) {
-        if (!ctx) return;
-
-        const dx = mouse.x - this.x;
-        const dy = mouse.y - this.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        // Only draw if within visibility radius
-        if (dist < visibilityRadius) {
-          // Smooth fade out using eased opacity
-          const normalizedDist = dist / visibilityRadius;
-          const opacity = Math.max(0, Math.pow(1 - normalizedDist, 2) * 0.85); // Increased max opacity
-
-          if (opacity > 0.01) {
-            ctx.fillStyle = `rgba(${this.color}, ${opacity})`;
-            ctx.fillRect(this.x - 1, this.y - 3, 2, 6); // Slightly larger lines
-          }
-        }
-      }
-    }
+    let afId: number;
+    let pts: { x: number; y: number; ox: number; oy: number; vx: number; vy: number; c: string }[] = [];
+    const sp = 45, ir = 250, vr = 350, rs = 0.02;
+    const cols = ['79,142,247', '162,89,255', '0,212,255', '255,77,141', '0,229,160'];
 
     const init = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      points = [];
-      for (let x = 0; x < canvas.width; x += spacing) {
-        for (let y = 0; y < canvas.height; y += spacing) {
-          points.push(new Point(x, y));
-        }
-      }
+      canvas.width = window.innerWidth; canvas.height = window.innerHeight; pts = [];
+      for (let x = 0; x < canvas.width; x += sp) for (let y = 0; y < canvas.height; y += sp)
+        pts.push({ x, y, ox: x, oy: y, vx: 0, vy: 0, c: cols[Math.floor(Math.random() * cols.length)] });
     };
-
     const animate = () => {
       if (!ctx || !canvas) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      points.forEach(point => {
-        point.update(mousePos.current);
-        point.draw(mousePos.current);
+      const m = mousePos.current;
+      pts.forEach(p => {
+        const dx = m.x - p.x, dy = m.y - p.y, d = Math.sqrt(dx * dx + dy * dy);
+        if (d < ir) { const f = ((ir - d) / ir) ** 2; const a = Math.atan2(dy, dx); p.vx -= Math.cos(a) * f * 2.5; p.vy -= Math.sin(a) * f * 2.5; }
+        p.vx += (p.ox - p.x) * rs; p.vy += (p.oy - p.y) * rs; p.vx *= 0.92; p.vy *= 0.92; p.x += p.vx; p.y += p.vy;
+        if (d < vr) { const op = Math.max(0, (1 - d / vr) ** 2 * 0.6); if (op > 0.01) { ctx.fillStyle = `rgba(${p.c},${op})`; ctx.fillRect(p.x - 1, p.y - 3, 2, 6); } }
       });
-
-      animationFrameId = requestAnimationFrame(animate);
+      afId = requestAnimationFrame(animate);
     };
-
-    init();
-    animate();
-
-    const handleResize = () => {
-      init();
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
-
-
-  // Background decorative code snippets
-  const codeSnippets = [
-    { text: '<Developer />', top: '10%', left: '5%', rotate: '-12deg' },
-    { text: 'const creative = true;', top: '25%', right: '10%', rotate: '5deg' },
-    { text: 'npm run start', bottom: '15%', left: '8%', rotate: '15deg' },
-    { text: 'while(alive) { code(); }', bottom: '30%', right: '5%', rotate: '-5deg' },
-    { text: 'git push origin master', top: '15%', right: '25%', rotate: '8deg' },
-    { text: 'import { Future } from "react";', top: '40%', left: '15%', rotate: '-3deg' },
-    { text: 'console.log("Hello World");', bottom: '40%', right: '20%', rotate: '10deg' },
-    { text: 'div { display: flex; }', top: '60%', right: '40%', rotate: '-8deg' },
-    { text: 'return <Success />;', bottom: '10%', left: '30%', rotate: '3deg' },
-  ];
+    init(); animate();
+    const onResize = () => init();
+    window.addEventListener('resize', onResize);
+    return () => { window.removeEventListener('resize', onResize); cancelAnimationFrame(afId); };
+  }, [introComplete]);
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans relative overflow-x-hidden">
+    <>
+      {/* ── CINEMATIC INTRO ── */}
+      {!introComplete && <CinematicIntro onComplete={handleIntroComplete} />}
 
-      {/* Background Canvas (Desktop Only) */}
-      <canvas
-        ref={canvasRef}
-        className="fixed inset-0 z-0 pointer-events-none hidden md:block"
-      />
-
-      {/* Decorative Blurred Code Background */}
-      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none">
-        {codeSnippets.map((item, index) => (
-          <div
-            key={index}
-            className="absolute font-mono text-gray-400 text-lg md:text-2xl font-bold opacity-40 blur-[1px] whitespace-nowrap"
-            style={{
-              top: item.top,
-              left: item.left,
-              right: item.right,
-              bottom: item.bottom,
-              transform: `rotate(${item.rotate})`,
-            }}
-          >
-            {item.text}
-          </div>
-        ))}
-      </div>
-
-      {/* Navigation */}
-      <nav
-        className={`fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md text-gray-900 px-6 hidden md:flex justify-center items-center border-b border-gray-200 transition-all duration-300 ${isScrolled ? 'py-2' : 'py-5'
-          }`}
-      >
-        {/* Desktop Menu */}
-        <div className="hidden md:flex gap-8 text-sm uppercase tracking-wider font-medium text-gray-600">
-          <a href="#about" className="hover:text-black transition-colors">About</a>
-          <a href="#projects" className="hover:text-black transition-colors">Projects</a>
-          <a href="#experience" className="hover:text-black transition-colors">Experience</a>
-          <a href="#education" className="hover:text-black transition-colors">Education</a>
-        </div>
-      </nav>
-
-      {/* Mobile Bottom Navigation (Footer) */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 z-50 py-4 px-2 sm:px-6 flex justify-around gap-2 sm:gap-6 items-center text-[10px] min-[375px]:text-xs sm:text-sm uppercase tracking-wider font-semibold text-gray-500 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-        <a href="#about" className="hover:text-black transition-colors">
-          About
-        </a>
-        <a href="#projects" className="hover:text-black transition-colors">
-          Projects
-        </a>
-        <a href="#experience" className="hover:text-black transition-colors">
-          Experience
-        </a>
-        <a href="#education" className="hover:text-black transition-colors">
-          Education
-        </a>
-      </div>
-
-      {/* Floating Social Buttons */}
+      {/* ── MAIN PORTFOLIO ── */}
       <div
-        className="fixed right-4 md:right-6 top-1/2 -translate-y-1/2 flex flex-col gap-3 md:gap-4 z-[60] transition-all duration-500 opacity-100 translate-x-0"
+        style={{
+          opacity: introComplete ? 1 : 0,
+          transition: 'opacity 0.8s ease-in',
+          background: 'var(--bg-primary)',
+          color: 'var(--text-primary)',
+          minHeight: '100vh',
+          position: 'relative',
+          overflowX: 'clip',
+        }}
+        className="noise-overlay"
       >
-        {socialLinks.map((link) => {
-          const Icon = link.icon;
-          return (
-            <a
-              key={`floating-${link.name}`}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`group relative flex items-center justify-center p-2.5 md:p-3 rounded-full bg-gradient-to-br ${link.color} shadow-lg transition-all duration-300 hover:-translate-x-1 hover:shadow-xl hover:scale-110 border border-white`}
-              title={link.name}
-            >
-              <Icon className="h-5 w-5 md:h-6 md:w-6 text-white" />
-            </a>
-          );
-        })}
-      </div>
+        <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none hidden md:block" />
 
-      {/* Hero Section */}
-      <main className="relative flex flex-col md:flex-row min-h-screen pt-20">
-
-        {/* Left Side - Designer */}
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-          className="order-2 md:order-none md:flex-1 relative flex items-center justify-center md:justify-end md:pr-[16vw] xl:pr-[18vw] pt-4 pb-0 px-8 md:p-8 z-10"
+        {/* ── NAV (Desktop) ── */}
+        <nav
+          className="hidden md:flex fixed top-0 w-full z-[100] transition-all duration-500 justify-center items-center"
+          style={{
+            background: isScrolled ? 'rgba(8,8,8,0.85)' : 'transparent',
+            backdropFilter: isScrolled ? 'blur(20px)' : 'none',
+            borderBottom: isScrolled ? '1px solid var(--border-subtle)' : '1px solid transparent',
+            padding: isScrolled ? '14px 24px' : '28px 24px',
+            pointerEvents: 'auto',
+          }}
         >
-          <div className="text-center md:text-right max-w-sm relative group">
-
-            <div className="relative">
-              <h1 className="text-5xl md:text-7xl font-bold mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-purple-600 drop-shadow-sm">
-                designer
-              </h1>
-              <p className="text-gray-900 font-medium text-sm md:text-base leading-relaxed">
-                UI/UX Designer with a passion for designing beautiful and functional user experiences
-              </p>
-            </div>
-            {/* Artistic Paint Splash Decoration */}
-            <div className="absolute top-1/2 left-10 w-32 h-32 bg-purple-200 blur-2xl rounded-full -z-10 mix-blend-multiply opacity-70"></div>
+          <div style={{ display: 'flex', gap: 36, fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--text-muted)' }}>
+            {navItems.map(item => (
+              <a key={item.label} href={item.href} style={{ textDecoration: 'none', color: 'inherit', transition: 'color 0.3s' }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}
+              >{item.label}</a>
+            ))}
           </div>
-        </motion.div>
+        </nav>
 
-        {/* Center Image & Vlogger */}
-        <motion.div
-          initial={{ opacity: 0, y: 50, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
-          className="order-1 md:order-none md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-20 w-full md:w-auto flex flex-col items-center justify-center pt-2 pb-8 md:py-0 gap-6"
+        {/* ── NAV (Mobile) ── */}
+        <div
+          className="flex md:hidden fixed bottom-0 left-0 right-0 z-[100] justify-around items-center"
+          style={{
+            padding: '16px 12px', background: 'rgba(8,8,8,0.92)', backdropFilter: 'blur(20px)',
+            borderTop: '1px solid var(--border-subtle)', fontFamily: 'var(--font-mono)',
+            fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-muted)',
+            pointerEvents: 'auto',
+            paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+          }}
         >
-
-
-
-
-          <div className="relative w-[450px] h-[450px] max-w-[100vw] md:w-[min(950px,90vh)] md:h-[min(950px,90vh)] max-h-[100vh]">
-            {/* Split Blur Effect */}
-            <div className="absolute inset-0 z-0 flex items-center justify-center scale-110 opacity-60">
-              <div className="w-full h-full bg-gradient-to-r from-pink-500 via-purple-500 to-transparent blur-[80px] -translate-x-10 rounded-full mix-blend-multiply"></div>
-              <div className="w-full h-full bg-gradient-to-l from-cyan-400 via-blue-500 to-transparent blur-[80px] translate-x-10 rounded-full mix-blend-multiply"></div>
-            </div>
-
-            {/* LAYER 1: Shadow for Base text (behind image) */}
-            <motion.div
-              initial={{ opacity: 0, x: "-150%" }}
-              animate={{ opacity: 1, x: "-50%" }}
-              transition={{ duration: 1, ease: "easeOut", delay: 1 }}
-              className="absolute top-12 md:top-28 left-1/2 z-[4] text-center w-full pointer-events-none"
-            >
-              <h2 className="relative text-3xl min-[400px]:text-4xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-transparent drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] whitespace-nowrap outline-text-mobile md:outline-text-desktop">
-                Content Creator
-              </h2>
-            </motion.div>
-
-            {/* LAYER 2: Base White Text (behind image) */}
-            <motion.div
-              initial={{ opacity: 0, x: "-150%" }}
-              animate={{ opacity: 1, x: "-50%" }}
-              transition={{ duration: 1, ease: "easeOut", delay: 1 }}
-              className="absolute top-12 md:top-28 left-1/2 z-[5] text-center w-full pointer-events-none"
-            >
-              <h2 className="relative text-3xl min-[400px]:text-4xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.7)] whitespace-nowrap">
-                Content Creator
-              </h2>
-            </motion.div>
-
-            {/* LAYER 3: The Image */}
-            <Image
-              src="/profile-v2.png"
-              alt="Profile"
-              fill
-              className="relative z-10 object-contain profile-mask select-none pointer-events-none transform-gpu will-change-transform scale-[1.1] md:scale-[1.15] -translate-y-8 lg:translate-y-8"
-              priority
-            />
-
-            {/* LAYER 4: Blended Text (in front of image) */}
-            <motion.div
-              initial={{ opacity: 0, x: "-150%" }}
-              animate={{ opacity: 1, x: "-50%" }}
-              transition={{ duration: 1, ease: "easeOut", delay: 1 }}
-              className="absolute top-12 md:top-28 left-1/2 z-20 text-center w-full mix-blend-overlay pointer-events-none"
-            >
-              <h2 className="relative text-3xl min-[400px]:text-4xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-white whitespace-nowrap">
-                Content Creator
-              </h2>
-            </motion.div>
-
-            {/* LAYER 5: Stroke Outline (in front of image) */}
-            <motion.div
-              initial={{ opacity: 0, x: "-150%" }}
-              animate={{ opacity: 1, x: "-50%" }}
-              transition={{ duration: 1, ease: "easeOut", delay: 1 }}
-              className="absolute top-12 md:top-28 left-1/2 z-30 text-center w-full pointer-events-none"
-            >
-              <h2 className="relative text-3xl min-[400px]:text-4xl md:text-5xl lg:text-7xl font-bold tracking-widest uppercase text-transparent whitespace-nowrap outline-text-front-mobile md:outline-text-front-desktop">
-                Content Creator
-              </h2>
-            </motion.div>
-          </div>
-
-        </motion.div>
-
-        {/* Right Side - Coder */}
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-          className="order-3 md:order-none md:flex-1 relative flex items-center justify-center md:justify-start md:pl-[16vw] xl:pl-[18vw] pt-2 pb-8 px-8 md:p-8 z-10"
-        >
-          <div className="text-center md:text-left max-w-sm relative group">
-
-            <div className="relative">
-              <h1 className="text-5xl md:text-7xl font-bold mb-4 tracking-tighter flex items-center justify-center md:justify-start gap-2">
-                <span className="font-mono text-4xl text-blue-700">&lt;</span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-cyan-700">/coder</span>
-                <span className="font-mono text-4xl text-blue-700">&gt;</span>
-              </h1>
-              <p className="text-gray-900 font-medium text-sm md:text-base leading-relaxed">
-                Front End Developer who focuses on writing clean, elegant and efficient code
-              </p>
-            </div>
-
-
-
-            {/* Code Snippet Decoration */}
-            <div className="absolute bottom-20 right-10 -z-10 opacity-10 font-mono text-xs hidden md:block text-blue-900">
-              <pre>{`
-                
-                  }
-                }
-              `}</pre>
-            </div>
-
-            <div className="absolute top-1/4 left-10 w-40 h-40 bg-blue-100 blur-3xl rounded-full -z-10 opacity-70"></div>
-          </div>
-        </motion.div>
-
-      </main>
-
-      {/* About Me Section */}
-      <section id="about" className="pb-0 pt-10 relative z-30 font-sans">
-        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
-          {/* Text Content */}
-          <div className="flex-1 space-y-6 bg-white/60 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-sm border border-white/80">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">
-              About Me <span className="text-blue-600">.</span>
-            </h2>
-            <p className="text-lg text-gray-800 leading-relaxed font-medium">
-              I am an undergraduate at Wayamba University of Sri Lanka, a programmer, and a photographer working at the intersection of technology and digital media. By combining a strong technical background with a passion for cinematic storytelling, I build digital solutions and content designed to be experienced rather than just consumed. Whether I am developing software or producing high-quality tech reviews and travel vlogs for YouTube.
-            </p>
-            <p className="text-lg text-gray-800 leading-relaxed font-medium">
-              My goal is to merge strategic thinking with creative vision to build truly immersive digital experiences.
-            </p>
-          </div>
-
-          {/* Second Profile Image */}
-          <div className="flex-1 relative w-full aspect-square max-w-[350px]">
-            <div className="absolute inset-0 bg-gradient-to-tr from-blue-100 to-purple-100 rounded-full -rotate-6 transform"></div>
-            <div className="relative w-full h-full rounded-full overflow-hidden shadow-2xl">
-              <Image
-                src="/split_face_v2.png"
-                alt="Kaveeth Manodhya - About Me"
-                fill
-                className="object-cover"
-              />
-            </div>
-          </div>
+          {navItems.slice(0, 4).map(item => (
+            <a key={item.label} href={item.href} style={{ textDecoration: 'none', color: 'inherit', padding: '8px 12px', display: 'block' }}>{item.label}</a>
+          ))}
         </div>
-      </section>
 
-      {/* Projects Section */}
-      <section className="pt-20 pb-14 md:pt-28 md:pb-14 relative z-30">
-        <div className="container mx-auto px-6">
-          <Projects />
+        {/* ── FLOATING SOCIALS ── */}
+        <div className="hidden md:flex flex-col gap-[14px]" style={{ position: 'fixed', right: 20, top: '50%', transform: 'translateY(-50%)', zIndex: 60 }}>
+          {socialLinks.map(link => {
+            const Icon = link.icon;
+            return (
+              <a key={link.name} href={link.url} target="_blank" rel="noopener noreferrer" title={link.name}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  width: 40, height: 40, borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-subtle)',
+                  backdropFilter: 'blur(8px)', transition: 'all 0.3s', color: 'var(--text-secondary)',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = link.accent; e.currentTarget.style.transform = 'translateX(-4px) scale(1.1)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.transform = 'none'; }}
+              >
+                <Icon style={{ width: 16, height: 16 }} />
+              </a>
+            );
+          })}
         </div>
-      </section>
 
-      {/* Resume Section - Kept existing component */}
-      <section className="pt-0 pb-28 md:pt-14 md:pb-20 relative z-30">
-        <div className="container mx-auto px-6">
-          <Resume />
-        </div>
-      </section>
+        {/* ══════════ HERO ══════════ */}
+        <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pb-20 pt-[130px] md:pt-[210px]">
+          {/* Ambient glow */}
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 700, height: 700, borderRadius: '50%', background: 'radial-gradient(circle, rgba(79,142,247,0.15) 0%, rgba(162,89,255,0.08) 40%, transparent 70%)', pointerEvents: 'none' }} />
 
-      {/* Footer / Copyright */}
-      <footer className="w-full flex flex-col items-center justify-center gap-6 py-10 text-gray-400 text-sm md:text-base z-30 relative bg-white pb-28 md:pb-12 overflow-hidden">
+          {/* Profile image with Glitch Effect */}
+          <div className="-translate-y-[40px] mb-[-50px] md:translate-y-[40px] md:mb-0">
+            <motion.div initial={{ opacity: 0, scale: 0.85, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 1.2, ease: 'easeOut' }}
+              style={{ position: 'relative', width: 'clamp(340px, 90vw, 450px)', height: 'clamp(340px, 90vw, 450px)', zIndex: 0 }}
+            >
+              <GlitchProfileImage startGlitch={introComplete} />
+            </motion.div>
+          </div>
 
-        {/* Background ambient liquid glow for footer */}
-        <div className="absolute bottom-1/2 left-1/2 -translate-x-1/2 translate-y-1/2 w-48 h-24 bg-gradient-to-r from-blue-300 via-purple-300 to-cyan-300 rounded-full blur-3xl opacity-30 pointer-events-none"></div>
+          {/* Title */}
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }}
+            style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.35em', color: 'var(--text-muted)', marginBottom: 20, zIndex: 10, position: 'relative' }}
+          >
+            Developer · Designer · Creator
+          </motion.p>
 
-        {/* View Counter Badge - Hidden by default, visible to admin */}
-        {isAdmin && (
-          <div className="relative group cursor-default z-10 w-auto">
-            {/* Animated liquid background blobs that react on hover */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500 rounded-full blur opacity-20 group-hover:opacity-60 transition duration-700 animate-pulse"></div>
+          <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.8 }}
+            style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(3.5rem, 10vw, 9rem)', fontWeight: 900, lineHeight: 0.9, letterSpacing: '-0.03em', marginBottom: 24, zIndex: 10 }}
+          >
+            <span style={{ color: '#fff' }}>HI, I&apos;M</span><br />
+            <span className="gradient-text">KAVEETH</span>
+          </motion.h1>
 
-            {/* Glass pill container outer border */}
-            <div className="relative flex items-center justify-center p-[1px] rounded-full bg-gradient-to-b from-white/80 to-white/20 shadow-[0_8px_32px_0_rgba(100,100,255,0.1)] group-hover:shadow-[0_12px_40px_0_rgba(100,100,255,0.2)] group-hover:-translate-y-1 transition-all duration-300">
-              {/* Glass pill inner surface - Reduced padding to make it smaller */}
-              <div className="flex items-center justify-center pl-4 pr-1.5 py-1.5 bg-white/60 backdrop-blur-2xl rounded-full border border-white/80">
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.6 }}
+            style={{ maxWidth: 480, fontSize: 15, lineHeight: 1.7, color: 'var(--text-secondary)', marginBottom: 40, zIndex: 10 }}
+          >
+            Building immersive digital experiences at the intersection of technology, photography, and cinematic storytelling.
+          </motion.p>
 
-                {/* Glass sheen overlay */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+          {/* CTA buttons — properly spaced */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9, duration: 0.6 }}
+            style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center', zIndex: 10 }}
+          >
+            <a href="#projects" style={{
+              display: 'inline-flex', alignItems: 'center', padding: '14px 32px',
+              borderRadius: 999, background: 'var(--grad-hero)', color: '#fff',
+              fontSize: 14, fontWeight: 600, textDecoration: 'none', transition: 'transform 0.3s, box-shadow 0.3s',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.boxShadow = '0 8px 30px rgba(79,142,247,0.3)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = 'none'; }}
+            >View My Work</a>
+            <a href="#contact" style={{
+              display: 'inline-flex', alignItems: 'center', padding: '14px 32px',
+              borderRadius: 999, background: 'transparent', border: '1px solid var(--border-medium)',
+              color: 'var(--text-primary)', fontSize: 14, fontWeight: 600, textDecoration: 'none',
+              backdropFilter: 'blur(8px)', transition: 'transform 0.3s, border-color 0.3s',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.borderColor = '#fff'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.borderColor = 'var(--border-medium)'; }}
+            >Get In Touch</a>
+          </motion.div>
 
-                {/* Label Text */}
-                <div className="flex items-center justify-center mr-3 z-10 pt-0.5">
-                  <span className="text-[10px] sm:text-xs font-bold text-gray-700 tracking-widest uppercase leading-none drop-shadow-sm">
-                    Profile Views
-                  </span>
-                </div>
 
-                {/* Number Pill - Adjusted padding and sizing */}
-                <div className="relative flex items-center justify-center min-w-[3rem] px-3 py-1 bg-blue-500/10 rounded-full border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors z-10">
-                  <span className="text-xs font-bold text-blue-600 font-mono tracking-tight leading-none drop-shadow-sm">
-                    {viewCount}
-                  </span>
-                  {/* Subtle shine over the number block */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-white/30 pointer-events-none mix-blend-overlay rounded-full"></div>
-                </div>
+
+          {/* Scroll indicator */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}
+            style={{ position: 'absolute', bottom: 40, left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}
+          >
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.3em', color: 'var(--text-muted)' }}>Scroll</span>
+            <ChevronDown className="bounce-slow" style={{ width: 16, height: 16, color: 'var(--text-muted)' }} />
+          </motion.div>
+        </section>
+
+        {/* ══════════ ABOUT (no second image) ══════════ */}
+        <section id="about" style={{ padding: '80px 0', position: 'relative', zIndex: 30 }}>
+          <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 24px' }}>
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-100px' }} transition={{ duration: 0.7 }}>
+              <p className="section-number" style={{ marginBottom: 12 }}>— About Me</p>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 700, color: '#fff', lineHeight: 1, marginBottom: 32 }}>
+                Who I Am<span className="gradient-text">.</span>
+              </h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                <p style={{ fontSize: 16, lineHeight: 1.8, color: 'var(--text-secondary)' }}>
+                  I am an undergraduate at Wayamba University of Sri Lanka, a programmer, and a photographer working at the intersection of technology and digital media. By combining a strong technical background with a passion for cinematic storytelling, I build digital solutions and content designed to be experienced rather than just consumed.
+                </p>
+                <p style={{ fontSize: 16, lineHeight: 1.8, color: 'var(--text-secondary)' }}>
+                  Whether developing software or producing high-quality tech reviews and travel vlogs for YouTube — my goal is to merge strategic thinking with creative vision to build truly immersive digital experiences.
+                </p>
               </div>
-            </div>
+            </motion.div>
           </div>
-        )}
+        </section>
 
-        <p
-          className="z-10 relative mt-2 cursor-default select-none transition-colors hover:text-gray-500"
-          onDoubleClick={handleSecretClick}
-          title="© 2026 Kaveeth Manodhya"
-        >
-          © 2026 Kaveeth Manodhya. All rights reserved.
-        </p>
-      </footer>
+        {/* ══════════ SERVICES ══════════ */}
+        <Services />
 
-    </div>
+        {/* ══════════ PROJECTS ══════════ */}
+        <Projects />
+
+        {/* ══════════ RESUME ══════════ */}
+        <div style={{ position: 'relative', zIndex: 30 }}>
+          <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
+            <Resume />
+          </div>
+        </div>
+
+        {/* ══════════ CONTACT ══════════ */}
+        <Contact />
+
+        {/* ══════════ FOOTER ══════════ */}
+        <footer style={{
+          width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center',
+          justifyContent: 'center', gap: 20, padding: '48px 24px 100px',
+          position: 'relative', zIndex: 30, color: 'var(--text-muted)', fontSize: 13,
+        }}>
+          <div style={{ position: 'absolute', bottom: '50%', left: '50%', transform: 'translate(-50%,50%)', width: 200, height: 100, borderRadius: '50%', filter: 'blur(40px)', opacity: 0.15, background: 'var(--grad-hero)', pointerEvents: 'none' }} />
+
+          {isAdmin && (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 12,
+              padding: '8px 20px', borderRadius: 999,
+              background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-subtle)',
+              backdropFilter: 'blur(12px)',
+            }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Profile Views</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700, color: 'var(--accent-blue)' }}>{viewCount}</span>
+            </div>
+          )}
+
+          <p style={{ cursor: 'default', userSelect: 'none', transition: 'color 0.3s' }}
+            onDoubleClick={handleSecretClick} title="© 2026 Kaveeth Manodhya"
+            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.4)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}
+          >© 2026 Kaveeth Manodhya. All rights reserved.</p>
+        </footer>
+      </div>
+    </>
   );
 }
