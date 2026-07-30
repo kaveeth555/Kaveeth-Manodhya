@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Image from 'next/image';
 import { Github, Youtube, Facebook, Linkedin, ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Lenis from 'lenis';
 import dynamic from 'next/dynamic';
+import SectionBackground from '../components/SectionBackground';
 
 // Lazy loaded components for better performance
 const CinematicIntro = dynamic(() => import('../components/CinematicIntro'), { ssr: false });
@@ -188,12 +188,16 @@ export default function Portfolio() {
         </div>
 
         {/* ══════════ HERO ══════════ */}
-        <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pb-20 pt-[130px] md:pt-[210px]">
+        <SectionBackground 
+          theme="hero" 
+          className="relative min-h-screen"
+          contentClassName="flex flex-col items-center justify-center text-center px-6 pb-20 pt-[130px] md:pt-[210px]"
+        >
           {/* Ambient glow */}
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 700, height: 700, borderRadius: '50%', background: 'radial-gradient(circle, rgba(79,142,247,0.15) 0%, rgba(162,89,255,0.08) 40%, transparent 70%)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 700, height: 700, borderRadius: '50%', background: 'radial-gradient(circle, rgba(79,142,247,0.15) 0%, rgba(162,89,255,0.08) 40%, transparent 70%)', pointerEvents: 'none', zIndex: 1 }} />
 
           {/* Profile image with Glitch Effect */}
-          <div className="-translate-y-[40px] mb-[-50px] md:translate-y-[40px] md:mb-0">
+          <div className="-translate-y-[40px] mb-[-50px] md:translate-y-[40px] md:mb-0" style={{ position: 'relative', zIndex: 2 }}>
             <motion.div initial={{ opacity: 0, scale: 0.85, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 1.2, ease: 'easeOut' }}
               style={{ position: 'relative', width: 'clamp(340px, 90vw, 450px)', height: 'clamp(340px, 90vw, 450px)', zIndex: 0 }}
             >
@@ -253,11 +257,11 @@ export default function Portfolio() {
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.3em', color: 'var(--text-muted)' }}>Scroll</span>
             <ChevronDown className="bounce-slow" style={{ width: 16, height: 16, color: 'var(--text-muted)' }} />
           </motion.div>
-        </section>
+        </SectionBackground>
 
-        {/* ══════════ ABOUT (no second image) ══════════ */}
-        <section id="about" style={{ padding: '80px 0', position: 'relative', zIndex: 30 }}>
-          <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 24px' }}>
+        {/* ══════════ ABOUT ══════════ */}
+        <SectionBackground theme="about" style={{ padding: '80px 0' }}>
+          <div id="about" style={{ maxWidth: 800, margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 2 }}>
             <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-100px' }} transition={{ duration: 0.7 }}>
               <p className="section-number" style={{ marginBottom: 12 }}>— About Me</p>
               <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 700, color: '#fff', lineHeight: 1, marginBottom: 32 }}>
@@ -273,23 +277,29 @@ export default function Portfolio() {
               </div>
             </motion.div>
           </div>
-        </section>
+        </SectionBackground>
 
         {/* ══════════ SERVICES ══════════ */}
-        <Services />
+        <SectionBackground theme="services">
+          <Services />
+        </SectionBackground>
 
         {/* ══════════ PROJECTS ══════════ */}
-        <Projects />
+        <SectionBackground theme="projects">
+          <Projects />
+        </SectionBackground>
 
-        {/* ══════════ RESUME ══════════ */}
-        <div style={{ position: 'relative', zIndex: 30 }}>
-          <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
+        {/* ══════════ RESUME / EXPERIENCE ══════════ */}
+        <SectionBackground theme="experience">
+          <div id="experience" style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
             <Resume />
           </div>
-        </div>
+        </SectionBackground>
 
         {/* ══════════ CONTACT ══════════ */}
-        <Contact />
+        <SectionBackground theme="contact">
+          <Contact />
+        </SectionBackground>
 
         {/* ══════════ FOOTER ══════════ */}
         <footer style={{
